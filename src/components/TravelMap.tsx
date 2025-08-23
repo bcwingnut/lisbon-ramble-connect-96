@@ -25,14 +25,20 @@ const TravelMap = ({ content }: TravelMapProps) => {
     
     // Extract specific place names (proper nouns and landmarks)
     const specificPlaces = [
-      // Common Lisbon landmarks
-      /\b(Jerónimos Monastery|Belém Tower|São Jorge Castle|Alfama|Bairro Alto|Chiado|Rossio|Cais do Sodré|LX Factory|Pastéis de Belém|Time Out Market Lisboa|Miradouro da Senhora do Monte|Ponte 25 de Abril|Cristo Rei|Oceanário|Gulbenkian Museum|Fado Museum|Tram 28|Elevador de Santa Justa)\b/gi,
+      // Cities and countries
+      /\b([A-Z][a-z]+(?:\s[A-Z][a-z]+)*)\b(?=\s*(?:,\s*(?:UK|USA|France|Germany|Italy|Spain|Japan|China|Brazil|Australia|Canada|India|Mexico|Thailand|Netherlands|Switzerland|Austria|Belgium|Norway|Sweden|Denmark|Finland|Portugal|Greece|Turkey|Egypt|Morocco|South Africa|Argentina|Chile|Peru|Colombia|Vietnam|Malaysia|Singapore|Philippines|Indonesia|South Korea|New Zealand|Ireland|Scotland|Wales|England|Poland|Czech Republic|Hungary|Romania|Bulgaria|Croatia|Slovenia|Slovakia|Lithuania|Latvia|Estonia|Iceland|Luxembourg|Malta|Cyprus)))/gi,
       
-      // Bold locations in markdown
-      /\*\*([A-Z][a-zA-Z\s]+(?:Monastery|Tower|Castle|Museum|Market|Restaurant|Cafe|Hotel|Park|Beach|Temple|Church|Square|District|Quarter|Neighborhood))\*\*/gi,
+      // Bold locations in markdown (more generic)
+      /\*\*([A-Z][a-zA-Z\s'-]+(?:Museum|Gallery|Palace|Cathedral|Basilica|Temple|Mosque|Synagogue|Park|Garden|Square|Plaza|Market|Mall|Tower|Bridge|Castle|Fort|Stadium|Arena|Theater|Theatre|Opera|Library|University|Hospital|Hotel|Restaurant|Cafe|Bar|Club|Beach|Island|Mountain|Lake|River|Falls|Valley|Desert|Forest|Monument|Memorial|Cemetery|Zoo|Aquarium|Observatory|Planetarium|Station|Airport|Port|Harbor|District|Quarter|Neighborhood|City|Town|Village))\*\*/gi,
       
-      // Places with specific keywords
-      /(?:visit|explore|go to|check out|head to|stop by)\s+([A-Z][a-zA-Z\s]+(?:Monastery|Tower|Castle|Museum|Market|Restaurant|Cafe|Hotel|Park|Beach|Temple|Church|Square|District))/gi,
+      // Places with specific keywords (more generic)  
+      /(?:visit|explore|go to|check out|head to|stop by|see|experience|discover)\s+([A-Z][a-zA-Z\s'-]+(?:Museum|Gallery|Palace|Cathedral|Temple|Park|Square|Market|Tower|Bridge|Castle|Stadium|Theater|Library|Hotel|Restaurant|Beach|Mountain|Lake|Monument|District|City|Town))/gi,
+      
+      // Landmark pattern for famous places
+      /\b([A-Z][a-zA-Z\s'-]*(?:Tower|Bridge|Palace|Cathedral|Museum|Gallery|Park|Square|Castle|Temple|Mosque|Basilica|Observatory|Stadium|Arena|Falls|Mountain|Lake|River|Desert|Island))\b/gi,
+      
+      // City names followed by attractions
+      /\b([A-Z][a-z]+(?:\s[A-Z][a-z]+)*)\s+(?:Cathedral|Museum|Palace|Castle|Bridge|Tower|Park|Square|Market|Opera|Theater|Stadium|Airport|Station)\b/gi
     ];
     
     specificPlaces.forEach(pattern => {
