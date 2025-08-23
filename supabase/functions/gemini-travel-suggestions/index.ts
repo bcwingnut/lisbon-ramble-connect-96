@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { message } = await req.json();
+    const { message, userId } = await req.json();
     
     const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
     if (!geminiApiKey) {
@@ -27,6 +27,25 @@ serve(async (req) => {
 
     console.log('Calling Gemini API for travel suggestions...');
 
+    // Fetch recent chat history from the sender
+    const { data: recentMessages } = await supabase
+      .from('messages')
+      .select(`
+        content,
+        created_at,
+        profiles!messages_user_id_fkey (
+          username
+        )
+      `)
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(5);
+
+    // Build context from recent messages
+    const chatContext = recentMessages && recentMessages.length > 0 
+      ? `\n\nRecent messages from this user:\n${recentMessages.reverse().map((msg: any) => `- ${msg.content}`).join('\n')}`
+      : '';
+
     // Call Gemini API
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`, {
       method: 'POST',
@@ -36,7 +55,9 @@ serve(async (req) => {
       body: JSON.stringify({
         contents: [{
           parts: [{
-            text: `You are a helpful travel assistant specializing in Lisbon, Portugal. A user in a Lisbon travel chat asked: "${message}". Provide helpful, specific travel suggestions for Lisbon including places to visit, local experiences, restaurants, or practical tips. Keep your response conversational and under 200 words.`
+            text: `You are a helpful travel assistant specializing in Lisbon, Portugal. A user in a Lisbon travel chat asked: "${message}". ${chatContext}
+
+Based on their chat history and current question, provide helpful, personalized travel suggestions for Lisbon including places to visit, local experiences, restaurants, or practical tips. Keep your response conversational and under 200 words.`
           }]
         }],
         generationConfig: {
