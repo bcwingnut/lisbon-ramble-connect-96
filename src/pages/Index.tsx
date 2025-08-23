@@ -58,72 +58,74 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
-      <ResizablePanelGroup direction="horizontal" className="flex-1">
-        {/* Main Chat Area */}
-        <ResizablePanel defaultSize={sidebarOpen ? 75 : 100} minSize={50}>
-          <div className="flex flex-col h-full">
-            <ChatHeader>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="ml-auto"
-              >
-                {sidebarOpen ? (
-                  <PanelRightClose className="h-4 w-4" />
-                ) : (
-                  <PanelRightOpen className="h-4 w-4" />
-                )}
-              </Button>
-            </ChatHeader>
-            
-            <div className="flex-1 flex flex-col overflow-hidden">
-              <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                {messagesLoading ? (
-                  <div className="flex items-center justify-center py-8">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
-                  </div>
-                ) : messages.length === 0 ? (
-                  <div className="text-center py-8">
-                    <div className="text-4xl mb-4">🇵🇹</div>
-                    <h3 className="text-lg font-semibold mb-2">Welcome to Lisbon Travelers!</h3>
-                    <p className="text-muted-foreground max-w-md mx-auto">
-                      Share your travel plans, ask for recommendations, and connect with fellow 
-                      travelers exploring the beautiful city of Lisbon.
-                    </p>
-                  </div>
-                ) : (
-                  messages.map((message) => (
-                    <ChatMessage
-                      key={message.id}
-                      message={message}
-                      isOwn={message.user_id === user.id}
-                    />
-                  ))
-                )}
-                <div ref={messagesEndRef} />
-              </div>
+      <div className="flex-1 flex">
+        <ResizablePanelGroup direction="horizontal" className="h-full">
+          {/* Main Chat Area */}
+          <ResizablePanel defaultSize={sidebarOpen ? 75 : 100} minSize={50}>
+            <div className="flex flex-col h-full">
+              <ChatHeader>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSidebarOpen(!sidebarOpen)}
+                  className="ml-auto"
+                >
+                  {sidebarOpen ? (
+                    <PanelRightClose className="h-4 w-4" />
+                  ) : (
+                    <PanelRightOpen className="h-4 w-4" />
+                  )}
+                </Button>
+              </ChatHeader>
               
-              <ChatInput 
-                onSendMessage={handleSendMessage}
-                disabled={messagesLoading}
-              />
-            </div>
-          </div>
-        </ResizablePanel>
-
-        {/* Resizable Handle */}
-        {sidebarOpen && <ResizableHandle withHandle />}
-
-        {/* Users Sidebar Panel */}
-        {sidebarOpen && (
-          <ResizablePanel defaultSize={25} minSize={20} maxSize={50}>
-            <div className="h-full overflow-hidden">
-              <UsersSidebar />
+              <div className="flex-1 flex flex-col overflow-hidden">
+                <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                  {messagesLoading ? (
+                    <div className="flex items-center justify-center py-8">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                    </div>
+                  ) : messages.length === 0 ? (
+                    <div className="text-center py-8">
+                      <div className="text-4xl mb-4">🇵🇹</div>
+                      <h3 className="text-lg font-semibold mb-2">Welcome to Lisbon Travelers!</h3>
+                      <p className="text-muted-foreground max-w-md mx-auto">
+                        Share your travel plans, ask for recommendations, and connect with fellow 
+                        travelers exploring the beautiful city of Lisbon.
+                      </p>
+                    </div>
+                  ) : (
+                    messages.map((message) => (
+                      <ChatMessage
+                        key={message.id}
+                        message={message}
+                        isOwn={message.user_id === user.id}
+                      />
+                    ))
+                  )}
+                  <div ref={messagesEndRef} />
+                </div>
+                
+                <ChatInput 
+                  onSendMessage={handleSendMessage}
+                  disabled={messagesLoading}
+                />
+              </div>
             </div>
           </ResizablePanel>
-        )}
-      </ResizablePanelGroup>
+
+          {/* Resizable Handle */}
+          {sidebarOpen && <ResizableHandle withHandle />}
+
+          {/* Users Sidebar Panel - Full Height */}
+          {sidebarOpen && (
+            <ResizablePanel defaultSize={25} minSize={20} maxSize={50}>
+              <div className="h-full overflow-hidden">
+                <UsersSidebar />
+              </div>
+            </ResizablePanel>
+          )}
+        </ResizablePanelGroup>
+      </div>
     </div>
   );
 };
