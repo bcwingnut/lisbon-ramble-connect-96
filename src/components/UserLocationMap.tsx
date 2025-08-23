@@ -32,7 +32,7 @@ const UserLocationMap = ({ users }: UserLocationMapProps) => {
   // Filter users with valid coordinates and parse PostgreSQL point format
   const usersWithLocations: UserLocation[] = users
     .filter(user => {
-      console.log('Checking user for location:', user.username, 'coordinates:', user.location_coordinates);
+      console.log('Checking user for location:', user.username, 'coordinates:', user.location_coordinates, 'text:', user.location_text);
       return user.location_coordinates;
     })
     .map(user => {
@@ -42,10 +42,12 @@ const UserLocationMap = ({ users }: UserLocationMapProps) => {
         const match = user.location_coordinates.match(/\(([^,]+),([^)]+)\)/);
         if (match) {
           coordinates = [parseFloat(match[1]), parseFloat(match[2])];
-          console.log('Parsed coordinates for', user.username, ':', coordinates);
+          console.log('✅ Parsed coordinates for', user.username, ':', coordinates);
         } else {
-          console.warn('Could not parse coordinates for', user.username, ':', user.location_coordinates);
+          console.warn('❌ Could not parse coordinates for', user.username, ':', user.location_coordinates);
         }
+      } else {
+        console.log('❌ No valid coordinates string for', user.username, ':', typeof user.location_coordinates, user.location_coordinates);
       }
       
       return {
@@ -62,7 +64,7 @@ const UserLocationMap = ({ users }: UserLocationMapProps) => {
       return hasValidCoords;
     });
 
-  console.log('Filtered users with valid locations:', usersWithLocations);
+  console.log('🗺️ Final filtered users with valid locations:', usersWithLocations.length, usersWithLocations);
 
   useEffect(() => {
     const initMap = async () => {

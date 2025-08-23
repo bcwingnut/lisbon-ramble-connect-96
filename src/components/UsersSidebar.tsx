@@ -96,11 +96,9 @@ const UsersSidebar = ({ className = '' }: UsersSidebarProps) => {
           onLocationUpdate={(location) => {
             console.log('Location updated callback called:', location);
             setCurrentUserLocation(location);
-            // Trigger a refetch after a small delay to allow database to update
-            setTimeout(() => {
-              console.log('Refetching users after location update...');
-              refetch();
-            }, 1000);
+            // Trigger immediate refetch
+            console.log('Triggering immediate refetch...');
+            refetch();
           }}
         />
       </ScrollArea>
