@@ -81,6 +81,7 @@ const UserLocationMap = ({ users }: UserLocationMapProps) => {
   useEffect(() => {
     const initMap = async () => {
       console.log('🚀 InitMap called with', usersWithLocations.length, 'users with locations');
+      console.log('🚀 InitMap usersWithLocations:', usersWithLocations);
       
       // Always set loading false if no users
       if (usersWithLocations.length === 0) {
@@ -88,6 +89,8 @@ const UserLocationMap = ({ users }: UserLocationMapProps) => {
         setLoading(false);
         return;
       }
+
+      console.log('✅ Users with locations found, proceeding with map init');
 
       // Wait for container to be available with retries
       let retries = 0;
@@ -109,6 +112,7 @@ const UserLocationMap = ({ users }: UserLocationMapProps) => {
         const { data, error: tokenError } = await supabase.functions.invoke('geocode-locations', {
           body: { locations: [] }
         });
+        console.log('🔑 Mapbox token response:', { data, tokenError });
 
         if (tokenError) {
           console.error('❌ Error getting Mapbox token:', tokenError);
@@ -117,7 +121,7 @@ const UserLocationMap = ({ users }: UserLocationMapProps) => {
         }
 
         if (!data?.mapboxToken) {
-          console.error('❌ No Mapbox token available');
+          console.error('❌ No Mapbox token available in response:', data);
           setLoading(false);
           return;
         }
