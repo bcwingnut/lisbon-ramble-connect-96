@@ -83,12 +83,14 @@ export const useMessages = () => {
       return false;
     }
 
-    // Check if message starts with @ai to trigger Gemini response
-    if (content.trim().toLowerCase().startsWith('@ai')) {
+    // Check if message mentions @ai anywhere to trigger Gemini response
+    const aiMention = /(^|\s)@ai(\s|$)/i.test(content);
+    if (aiMention) {
+      const cleaned = content.replace(/@ai/ig, '').trim();
       try {
         const { error: aiError } = await supabase.functions.invoke('gemini-travel-suggestions', {
           body: { 
-            message: content.replace('@ai', '').trim() || 'Give me travel suggestions',
+            message: cleaned || 'Give me travel suggestions',
             userId: userId
           }
         });
