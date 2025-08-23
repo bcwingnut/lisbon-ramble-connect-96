@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import type { Message } from '@/hooks/useMessages';
 import Markdown from '@/components/Markdown';
 import LinkChips from '@/components/LinkChips';
+import TravelMap from '@/components/TravelMap';
 
 interface ChatMessageProps {
   message: Message;
@@ -38,6 +39,9 @@ const ChatMessage = ({ message, isOwn }: ChatMessageProps) => {
           <Markdown content={message.content} isInverted={isOwn} />
           {isAi && urls.length > 0 && (
             <LinkChips urls={urls} />
+          )}
+          {isAi && (
+            <TravelMap content={message.content} />
           )}
         </Card>
         
