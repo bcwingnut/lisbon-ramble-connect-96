@@ -43,7 +43,7 @@ const locationConfig = {
 const LocationChat = () => {
   const { location } = useParams<{ location: string }>();
   const { user, loading: authLoading } = useAuth();
-  const { messages, loading: messagesLoading, sendMessage } = useMessages();
+  const { messages, loading: messagesLoading, sendMessage } = useMessages(location);
   const { toast } = useToast();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -65,7 +65,7 @@ const LocationChat = () => {
 
   const handleSendMessage = async (content: string) => {
     if (user) {
-      const success = await sendMessage(content, user.id);
+      const success = await sendMessage(content, user.id, location);
       if (!success) {
         toast({
           title: "Error",

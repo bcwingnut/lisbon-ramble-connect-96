@@ -11,22 +11,27 @@ export interface Message {
   };
 }
 
-export const useMessages = () => {
+export const useMessages = (location?: string) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Fetch initial messages
     const fetchMessages = async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from('messages')
         .select(`
           *,
           profiles!messages_user_id_fkey (
             username
           )
-        `)
-        .order('created_at', { ascending: true });
+        `);
+      
+      // TODO: Add location filtering when location column is added to messages table
+      // For now, showing all messages until database schema is updated
+      // .eq('location', location)
+      
+      const { data, error } = await query.order('created_at', { ascending: true });
 
       if (error) {
         console.error('Error fetching messages:', error);
@@ -40,7 +45,7 @@ export const useMessages = () => {
 
     // Set up real-time subscription
     const channel = supabase
-      .channel('messages')
+      .channel(`messages-${location || 'all'}`)
       .on(
         'postgres_changes',
         {
@@ -71,12 +76,16 @@ export const useMessages = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [location]);
 
-  const sendMessage = async (content: string, userId: string) => {
+  const sendMessage = async (content: string, userId: string, messageLocation?: string) => {
+    // TODO: Add location to insert when location column is added to messages table
+    const messageData: any = { content, user_id: userId };
+    // messageData.location = messageLocation;
+    
     const { error } = await supabase
       .from('messages')
-      .insert([{ content, user_id: userId }]);
+      .insert([messageData]);
 
     if (error) {
       console.error('Error sending message:', error);
