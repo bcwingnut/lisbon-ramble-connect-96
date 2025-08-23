@@ -97,10 +97,25 @@ const LocationInput = ({ currentLocation, onLocationUpdate }: LocationInputProps
     setIsGettingGPS(true);
 
     try {
+      // Check permission status first
+      if ('permissions' in navigator) {
+        const permissionStatus = await navigator.permissions.query({ name: 'geolocation' });
+        
+        if (permissionStatus.state === 'denied') {
+          toast({
+            title: "Location access blocked",
+            description: "Please enable location access in your browser settings and reload the page.",
+            variant: "destructive"
+          });
+          setIsGettingGPS(false);
+          return;
+        }
+      }
+
       const position = await new Promise<GeolocationPosition>((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(resolve, reject, {
           enableHighAccuracy: true,
-          timeout: 10000,
+          timeout: 15000,
           maximumAge: 300000 // 5 minutes
         });
       });
