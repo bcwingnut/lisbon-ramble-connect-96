@@ -11,6 +11,7 @@ const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
+  const [linkedinUrl, setLinkedinUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const { signUp, signIn } = useAuth();
   const { toast } = useToast();
@@ -22,7 +23,7 @@ const Auth = () => {
     try {
       let error;
       if (isSignUp) {
-        ({ error } = await signUp(email, password, username));
+        ({ error } = await signUp(email, password, username, linkedinUrl));
       } else {
         ({ error } = await signIn(email, password));
       }
@@ -64,17 +65,29 @@ const Auth = () => {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {isSignUp && (
-              <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
-                <Input
-                  id="username"
-                  type="text"
-                  placeholder="Your travel name"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  required={isSignUp}
-                />
-              </div>
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="username">Username</Label>
+                  <Input
+                    id="username"
+                    type="text"
+                    placeholder="Your travel name"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    required={isSignUp}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="linkedin">LinkedIn URL (optional)</Label>
+                  <Input
+                    id="linkedin"
+                    type="url"
+                    placeholder="https://linkedin.com/in/your-profile"
+                    value={linkedinUrl}
+                    onChange={(e) => setLinkedinUrl(e.target.value)}
+                  />
+                </div>
+              </>
             )}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
