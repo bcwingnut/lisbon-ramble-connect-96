@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { message, userId, isPersonalChat } = await req.json();
+    const { message, userId } = await req.json();
     
     const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
     if (!geminiApiKey) {
@@ -87,13 +87,6 @@ Please respond in clear, well-structured GitHub-flavored Markdown:
 
     if (!aiResponse) {
       throw new Error('No response from Gemini API');
-    }
-
-    // If this is a personal chat, return the response directly
-    if (isPersonalChat) {
-      return new Response(JSON.stringify({ response: aiResponse }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
     }
 
     console.log('Gemini response received, inserting as message...');
