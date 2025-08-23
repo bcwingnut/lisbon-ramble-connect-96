@@ -1,18 +1,13 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { MessageCircle, Bot, Hotel } from 'lucide-react';
+import { Bot, Hotel } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import LocationDropdown from './LocationDropdown';
 
 const Navbar = () => {
   const location = useLocation();
 
   const navItems = [
-    {
-      path: '/',
-      label: 'Group Chat',
-      icon: MessageCircle,
-      description: 'Chat with other travelers'
-    },
     {
       path: '/personal-chatbot',
       label: 'Personal Chatbot',
@@ -33,9 +28,10 @@ const Navbar = () => {
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
-              <span className="text-xl font-bold text-primary">🇵🇹 Lisbon Connect</span>
+              <span className="text-xl font-bold text-primary">🌍 Global Travelers</span>
             </div>
             <div className="ml-6 flex space-x-8">
+              <LocationDropdown />
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.path;

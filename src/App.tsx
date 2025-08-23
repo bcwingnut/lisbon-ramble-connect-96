@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import PersonalChatbot from "./pages/PersonalChatbot";
 import Booking from "./pages/Booking";
+import LocationChat from "./pages/LocationChat";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -20,6 +21,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/chat/:location" element={<LocationChat />} />
           <Route path="/personal-chatbot" element={<PersonalChatbot />} />
           <Route path="/booking" element={<Booking />} />
           <Route path="/auth" element={<Auth />} />
