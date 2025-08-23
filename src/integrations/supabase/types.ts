@@ -49,6 +49,8 @@ export type Database = {
           created_at: string
           id: string
           linkedin_url: string | null
+          location_coordinates: unknown | null
+          location_text: string | null
           updated_at: string
           user_id: string
           username: string
@@ -58,6 +60,8 @@ export type Database = {
           created_at?: string
           id?: string
           linkedin_url?: string | null
+          location_coordinates?: unknown | null
+          location_text?: string | null
           updated_at?: string
           user_id: string
           username: string
@@ -67,6 +71,8 @@ export type Database = {
           created_at?: string
           id?: string
           linkedin_url?: string | null
+          location_coordinates?: unknown | null
+          location_text?: string | null
           updated_at?: string
           user_id?: string
           username?: string

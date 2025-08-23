@@ -1,14 +1,27 @@
 import { useUsers } from '@/hooks/useUsers';
+import { useAuth } from '@/hooks/useAuth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Users } from 'lucide-react';
+import UserLocationMap from '@/components/UserLocationMap';
+import LocationInput from '@/components/LocationInput';
+import { useState, useEffect } from 'react';
 
 interface UsersSidebarProps {
   className?: string;
 }
 
 const UsersSidebar = ({ className = '' }: UsersSidebarProps) => {
-  const { users, loading } = useUsers();
+  const { users, loading, refetch } = useUsers();
+  const { user } = useAuth();
+  const [currentUserLocation, setCurrentUserLocation] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (user && users.length > 0) {
+      const currentUser = users.find(u => u.user_id === user.id);
+      setCurrentUserLocation(currentUser?.location_text || null);
+    }
+  }, [user, users]);
 
   if (loading) {
     return (
@@ -65,11 +78,26 @@ const UsersSidebar = ({ className = '' }: UsersSidebarProps) => {
                     <div className="h-2 w-2 bg-success rounded-full"></div>
                     <span className="text-xs text-muted-foreground">Online</span>
                   </div>
+                  {user.location_text && (
+                    <p className="text-xs text-muted-foreground truncate mt-1">
+                      📍 {user.location_text}
+                    </p>
+                  )}
                 </div>
               </div>
             ))
           )}
         </div>
+        
+        <UserLocationMap users={users} />
+        
+        <LocationInput 
+          currentLocation={currentUserLocation} 
+          onLocationUpdate={(location) => {
+            setCurrentUserLocation(location);
+            refetch(); // Refresh users list to update the map
+          }}
+        />
       </ScrollArea>
     </div>
   );
