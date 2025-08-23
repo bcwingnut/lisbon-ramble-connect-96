@@ -94,8 +94,13 @@ const UsersSidebar = ({ className = '' }: UsersSidebarProps) => {
         <LocationInput 
           currentLocation={currentUserLocation} 
           onLocationUpdate={(location) => {
+            console.log('Location updated callback called:', location);
             setCurrentUserLocation(location);
-            refetch(); // Refresh users list to update the map
+            // Trigger a refetch after a small delay to allow database to update
+            setTimeout(() => {
+              console.log('Refetching users after location update...');
+              refetch();
+            }, 1000);
           }}
         />
       </ScrollArea>

@@ -27,16 +27,29 @@ const LocationInput = ({ currentLocation, onLocationUpdate }: LocationInputProps
       let coordinates = null;
       
       if (location.trim()) {
+        console.log('Geocoding location:', location.trim());
+        
         // Geocode the location
-        const { data: geocodeData } = await supabase.functions.invoke('geocode-locations', {
+        const { data: geocodeData, error: geocodeError } = await supabase.functions.invoke('geocode-locations', {
           body: { locations: [location.trim()] }
         });
+        
+        console.log('Geocode response:', geocodeData, geocodeError);
+        
+        if (geocodeError) {
+          console.error('Geocoding error:', geocodeError);
+        }
         
         if (geocodeData?.locations?.[0]) {
           const [lng, lat] = geocodeData.locations[0].coordinates;
           coordinates = `(${lng},${lat})`;
+          console.log('Generated coordinates:', coordinates);
+        } else {
+          console.warn('No coordinates found for location:', location.trim());
         }
       }
+
+      console.log('Updating profile with:', { location_text: location.trim() || null, location_coordinates: coordinates });
 
       // Update the user's profile
       const { error } = await supabase
@@ -48,6 +61,7 @@ const LocationInput = ({ currentLocation, onLocationUpdate }: LocationInputProps
         .eq('user_id', user.id);
 
       if (error) {
+        console.error('Profile update error:', error);
         throw error;
       }
 
