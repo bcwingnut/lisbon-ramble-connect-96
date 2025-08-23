@@ -66,17 +66,25 @@ const UserLocationMap = ({ users }: UserLocationMapProps) => {
 
   useEffect(() => {
     const initMap = async () => {
-      console.log('Initializing user location map');
+      console.log('Initializing user location map with', usersWithLocations.length, 'users');
       
-      // Wait for container to be available
-      if (!mapContainer.current) {
-        console.log('Map container not ready, retrying...');
-        setTimeout(initMap, 100);
-        return;
-      }
-      
+      // Always set loading false if no users
       if (usersWithLocations.length === 0) {
         console.log('No users with locations found, showing empty state');
+        setLoading(false);
+        return;
+      }
+
+      // Wait for container to be available with retries
+      let retries = 0;
+      while (!mapContainer.current && retries < 10) {
+        console.log('Map container not ready, retrying...', retries);
+        await new Promise(resolve => setTimeout(resolve, 100));
+        retries++;
+      }
+
+      if (!mapContainer.current) {
+        console.error('Map container never became available');
         setLoading(false);
         return;
       }
