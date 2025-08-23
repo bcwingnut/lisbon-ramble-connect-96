@@ -27,9 +27,9 @@ export const useMessages = (location?: string) => {
           )
         `);
       
-      // TODO: Add location filtering when location column is added to messages table
-      // For now, showing all messages until database schema is updated
-      // .eq('location', location)
+      if (location) {
+        query = query.eq('location', location);
+      }
       
       const { data, error } = await query.order('created_at', { ascending: true });
 
@@ -79,9 +79,11 @@ export const useMessages = (location?: string) => {
   }, [location]);
 
   const sendMessage = async (content: string, userId: string, messageLocation?: string) => {
-    // TODO: Add location to insert when location column is added to messages table
-    const messageData: any = { content, user_id: userId };
-    // messageData.location = messageLocation;
+    const messageData: any = { 
+      content, 
+      user_id: userId,
+      location: messageLocation || location || 'lisbon'
+    };
     
     const { error } = await supabase
       .from('messages')
@@ -100,7 +102,8 @@ export const useMessages = (location?: string) => {
         const { error: aiError } = await supabase.functions.invoke('gemini-travel-suggestions', {
           body: { 
             message: cleaned || 'Give me travel suggestions',
-            userId: userId
+            userId: userId,
+            location: messageLocation || location || 'lisbon'
           }
         });
         

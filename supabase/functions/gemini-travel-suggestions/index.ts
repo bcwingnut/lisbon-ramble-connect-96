@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { message, userId, isPersonalChat } = await req.json();
+    const { message, userId, isPersonalChat, location = 'lisbon' } = await req.json();
     
     const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
     if (!geminiApiKey) {
@@ -137,9 +137,13 @@ Respond in clear, well-structured GitHub-flavored Markdown:
     }
 
     // Insert AI response as a message with special prefix from the bot user
-    const { error: insertError } = await supabase
-      .from('messages')
-      .insert([{ content: `🤖 **AI Travel Assistant:**\n\n${aiResponse}`, user_id: botUserId! }]);
+        const { error: insertError } = await supabase
+          .from('messages')
+          .insert({
+            content: `🤖 **AI Travel Assistant:**\n\n${aiResponse}`,
+            user_id: botUserId,
+            location: location
+          });
 
     if (insertError) {
       console.error('Error inserting AI response:', insertError);
