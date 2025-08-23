@@ -66,6 +66,8 @@ Please respond in clear, well-structured GitHub-flavored Markdown:
 - Use short sections with bullet points
 - Bold key place names and important tips
 - Include practical details (best time, how to get there, price ranges) when helpful
+- **IMPORTANT: Include real, working URLs to restaurant websites, attraction sites, and experience booking pages whenever possible**
+- Format links as: [Place Name](https://actual-website-url.com)
 - Keep it friendly and under 200 words`
           }]
         }],
