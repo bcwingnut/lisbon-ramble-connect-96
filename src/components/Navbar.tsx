@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { MessageCircle, Bot } from 'lucide-react';
+import { MessageCircle, Bot, Hotel } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const Navbar = () => {
@@ -18,6 +18,12 @@ const Navbar = () => {
       label: 'Personal Chatbot',
       icon: Bot,
       description: 'AI travel assistant'
+    },
+    {
+      path: '/booking',
+      label: 'Booking',
+      icon: Hotel,
+      description: 'Book hotels with AI assistance'
     }
   ];
 
