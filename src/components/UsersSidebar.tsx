@@ -45,8 +45,8 @@ const UsersSidebar = () => {
         </div>
       </div>
       
-      {/* Scrollable Users List */}
-      <div className="flex-1 overflow-hidden">
+      {/* Scrollable Users List - constrained height */}
+      <div className="flex-1 min-h-0">
         <ScrollArea className="h-full">
           <div className="space-y-2 p-4">
             {users.length === 0 ? (
@@ -90,8 +90,8 @@ const UsersSidebar = () => {
         </ScrollArea>
       </div>
       
-      {/* Fixed Footer - Map and Location Input */}
-      <div className="flex-shrink-0 border-t bg-background">
+      {/* Fixed Footer - Map and Location Input - always visible */}
+      <div className="flex-shrink-0 border-t">
         <UserLocationMap users={users} />
         
         <LocationInput 
