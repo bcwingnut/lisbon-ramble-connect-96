@@ -78,7 +78,7 @@ const Auth = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="linkedin">LinkedIn URL (optional)</Label>
+                  <Label htmlFor="linkedin">LinkedIn URL</Label>
                   <Input
                     id="linkedin"
                     type="url"
