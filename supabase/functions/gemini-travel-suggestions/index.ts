@@ -59,12 +59,29 @@ serve(async (req) => {
 
     console.log('Gemini response received, inserting as message...');
 
-    // Insert AI response as a message from a system user
+    // Get the authorization header to identify the user
+    const authHeader = req.headers.get('authorization');
+    if (!authHeader) {
+      throw new Error('No authorization header');
+    }
+
+    // Set up supabase with user context
+    const supabaseWithAuth = createClient(supabaseUrl, supabaseKey, {
+      global: { headers: { authorization: authHeader } }
+    });
+
+    // Get current user
+    const { data: { user } } = await supabaseWithAuth.auth.getUser();
+    if (!user) {
+      throw new Error('No authenticated user');
+    }
+
+    // Insert AI response as a message with special prefix
     const { error: insertError } = await supabase
       .from('messages')
       .insert([{
-        content: aiResponse,
-        user_id: '00000000-0000-0000-0000-000000000000' // System user ID
+        content: `🤖 AI: ${aiResponse}`,
+        user_id: user.id
       }]);
 
     if (insertError) {
