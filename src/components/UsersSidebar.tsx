@@ -21,8 +21,8 @@ const UsersSidebar = () => {
 
   if (loading) {
     return (
-      <div className="bg-card h-full flex flex-col relative">
-        <div className="p-4 border-b flex-shrink-0 sticky top-0 bg-card z-10">
+      <div className="bg-card h-full flex flex-col">
+        <div className="p-4 border-b flex-shrink-0 bg-card">
           <div className="flex items-center gap-2">
             <Users className="h-5 w-5 text-primary" />
             <h2 className="font-semibold">Travelers</h2>
@@ -36,16 +36,16 @@ const UsersSidebar = () => {
   }
 
   return (
-    <div className="bg-card h-full flex flex-col relative">
-      {/* Fixed Header - Always visible at top of sidebar */}
-      <div className="p-4 border-b flex-shrink-0 sticky top-0 bg-card z-10">
+    <div className="bg-card h-full flex flex-col">
+      {/* Fixed Header - Always visible at top */}
+      <div className="p-4 border-b flex-shrink-0 bg-card">
         <div className="flex items-center gap-2">
           <Users className="h-5 w-5 text-primary" />
           <h2 className="font-semibold">Travelers ({users.length})</h2>
         </div>
       </div>
       
-      {/* Scrollable Users List - takes remaining space above fixed footer */}
+      {/* Scrollable Users List Only - Independent scroll */}
       <div className="flex-1 overflow-hidden">
         <ScrollArea className="h-full">
           <div className="space-y-2 p-4 pb-2">
@@ -90,8 +90,8 @@ const UsersSidebar = () => {
         </ScrollArea>
       </div>
       
-      {/* Fixed Footer - Map and Location Input - always visible */}
-      <div className="flex-shrink-0 border-t sticky bottom-0 bg-card">
+      {/* Fixed Footer - Map and Location Input */}
+      <div className="flex-shrink-0 border-t bg-card">
         <UserLocationMap users={users} />
         
         <LocationInput 
