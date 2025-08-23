@@ -55,9 +55,18 @@ serve(async (req) => {
       body: JSON.stringify({
         contents: [{
           parts: [{
-            text: `You are a helpful travel assistant specializing in Lisbon, Portugal. A user in a Lisbon travel chat asked: "${message}". ${chatContext}
+            text: `You are a helpful travel assistant specializing in Lisbon, Portugal.
 
-Based on their chat history and current question, provide helpful, personalized travel suggestions for Lisbon including places to visit, local experiences, restaurants, or practical tips. Keep your response conversational and under 200 words.`
+User's current message: "${message}"
+
+${chatContext}
+
+Please respond in clear, well-structured GitHub-flavored Markdown:
+- Start with a concise title (##)
+- Use short sections with bullet points
+- Bold key place names and important tips
+- Include practical details (best time, how to get there, price ranges) when helpful
+- Keep it friendly and under 200 words`
           }]
         }],
         generationConfig: {

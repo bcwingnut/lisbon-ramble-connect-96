@@ -2,6 +2,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import type { Message } from '@/hooks/useMessages';
+import Markdown from '@/components/Markdown';
 
 interface ChatMessageProps {
   message: Message;
@@ -29,7 +30,7 @@ const ChatMessage = ({ message, isOwn }: ChatMessageProps) => {
         )}
         
         <Card className={`p-3 ${isOwn ? 'bg-primary text-primary-foreground' : 'bg-card'}`}>
-          <p className="text-sm break-words">{message.content}</p>
+          <Markdown content={message.content} isInverted={isOwn} />
         </Card>
         
         <span className="text-xs text-muted-foreground mt-1 px-1">
