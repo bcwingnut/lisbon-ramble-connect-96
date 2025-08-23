@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { supabase } from '@/integrations/supabase/client';
@@ -33,47 +33,49 @@ const UserLocationMap = ({ users }: UserLocationMapProps) => {
   console.log('- Raw users received:', users.length);
   console.log('- Users data:', users.map(u => ({ username: u.username, location_text: u.location_text, location_coordinates: u.location_coordinates })));
 
-  // Filter users with valid coordinates and parse PostgreSQL point format
-  const usersWithLocations: UserLocation[] = users
-    .filter(user => {
-      console.log('🔍 Checking user for location:', user.username, 'coordinates:', user.location_coordinates, 'text:', user.location_text);
-      const hasCoords = user.location_coordinates;
-      console.log('- Has coordinates?', hasCoords);
-      return hasCoords;
-    })
-    .map(user => {
-      console.log('🔍 Processing user:', user.username);
-      // Parse PostgreSQL point format "(x,y)" to coordinates
-      let coordinates: [number, number] = [0, 0];
-      if (user.location_coordinates && typeof user.location_coordinates === 'string') {
-        console.log('- Coordinate string:', user.location_coordinates);
-        const match = user.location_coordinates.match(/\(([^,]+),([^)]+)\)/);
-        console.log('- Regex match:', match);
-        if (match) {
-          coordinates = [parseFloat(match[1]), parseFloat(match[2])];
-          console.log('✅ Parsed coordinates for', user.username, ':', coordinates);
+  // Memoize the filtered users calculation to avoid unnecessary re-renders
+  const usersWithLocations: UserLocation[] = useMemo(() => {
+    return users
+      .filter(user => {
+        console.log('🔍 Checking user for location:', user.username, 'coordinates:', user.location_coordinates, 'text:', user.location_text);
+        const hasCoords = user.location_coordinates;
+        console.log('- Has coordinates?', hasCoords);
+        return hasCoords;
+      })
+      .map(user => {
+        console.log('🔍 Processing user:', user.username);
+        // Parse PostgreSQL point format "(x,y)" to coordinates
+        let coordinates: [number, number] = [0, 0];
+        if (user.location_coordinates && typeof user.location_coordinates === 'string') {
+          console.log('- Coordinate string:', user.location_coordinates);
+          const match = user.location_coordinates.match(/\(([^,]+),([^)]+)\)/);
+          console.log('- Regex match:', match);
+          if (match) {
+            coordinates = [parseFloat(match[1]), parseFloat(match[2])];
+            console.log('✅ Parsed coordinates for', user.username, ':', coordinates);
+          } else {
+            console.warn('❌ Could not parse coordinates for', user.username, ':', user.location_coordinates);
+          }
         } else {
-          console.warn('❌ Could not parse coordinates for', user.username, ':', user.location_coordinates);
+          console.log('❌ No valid coordinates string for', user.username, ':', typeof user.location_coordinates, user.location_coordinates);
         }
-      } else {
-        console.log('❌ No valid coordinates string for', user.username, ':', typeof user.location_coordinates, user.location_coordinates);
-      }
-      
-      const result = {
-        id: user.id,
-        username: user.username,
-        avatar_url: user.avatar_url,
-        location_text: user.location_text,
-        coordinates
-      };
-      console.log('- Final user object:', result);
-      return result;
-    })
-    .filter(user => {
-      const hasValidCoords = user.coordinates[0] !== 0 && user.coordinates[1] !== 0;
-      console.log('🔍 User', user.username, 'has valid coordinates:', hasValidCoords, user.coordinates);
-      return hasValidCoords;
-    });
+        
+        const result = {
+          id: user.id,
+          username: user.username,
+          avatar_url: user.avatar_url,
+          location_text: user.location_text,
+          coordinates
+        };
+        console.log('- Final user object:', result);
+        return result;
+      })
+      .filter(user => {
+        const hasValidCoords = user.coordinates[0] !== 0 && user.coordinates[1] !== 0;
+        console.log('🔍 User', user.username, 'has valid coordinates:', hasValidCoords, user.coordinates);
+        return hasValidCoords;
+      });
+  }, [users]);
 
   console.log('🗺️ Final filtered users with valid locations:', usersWithLocations.length, usersWithLocations);
 
@@ -246,7 +248,7 @@ const UserLocationMap = ({ users }: UserLocationMapProps) => {
         map.current = null;
       }
     };
-  }, [usersWithLocations.length, JSON.stringify(usersWithLocations)]);
+  }, [usersWithLocations]);
 
   if (loading) {
     return (
