@@ -54,10 +54,17 @@ const TravelMap = ({ content }: TravelMapProps) => {
 
   useEffect(() => {
     const locationNames = extractLocations(content);
+    console.log('Extracted locations:', locationNames);
     
     if (locationNames.length === 0) return;
 
     setLoading(true);
+    
+    // Clean up existing map
+    if (map.current) {
+      map.current.remove();
+      map.current = null;
+    }
 
     supabase.functions.invoke('geocode-locations', {
       body: { locations: locationNames }
@@ -67,45 +74,65 @@ const TravelMap = ({ content }: TravelMapProps) => {
         return;
       }
 
-      if (data?.locations && data.mapboxToken) {
+      if (data?.locations && data.mapboxToken && data.locations.length > 0) {
+        console.log('Map data received:', data.locations);
         setLocations(data.locations);
         
-        if (mapContainer.current && data.locations.length > 0) {
-          mapboxgl.accessToken = data.mapboxToken;
-          
-          // Calculate bounds
-          const bounds = new mapboxgl.LngLatBounds();
-          data.locations.forEach((loc: Location) => {
-            bounds.extend(loc.coordinates);
-          });
+        // Wait for next tick to ensure container is ready
+        setTimeout(() => {
+          if (mapContainer.current && data.locations.length > 0) {
+            try {
+              mapboxgl.accessToken = data.mapboxToken;
+              
+              // Calculate bounds
+              const bounds = new mapboxgl.LngLatBounds();
+              data.locations.forEach((loc: Location) => {
+                bounds.extend(loc.coordinates);
+              });
 
-          map.current = new mapboxgl.Map({
-            container: mapContainer.current,
-            style: 'mapbox://styles/mapbox/light-v11',
-            bounds: bounds,
-            fitBoundsOptions: { padding: 40 }
-          });
+              map.current = new mapboxgl.Map({
+                container: mapContainer.current,
+                style: 'mapbox://styles/mapbox/light-v11',
+                bounds: bounds,
+                fitBoundsOptions: { padding: 40 },
+                attributionControl: false
+              });
 
-          // Add markers
-          data.locations.forEach((location: Location) => {
-            const popup = new mapboxgl.Popup({ offset: 25 })
-              .setText(location.name);
+              map.current.on('load', () => {
+                console.log('Map loaded successfully');
+              });
 
-            new mapboxgl.Marker({ color: '#3b82f6' })
-              .setLngLat(location.coordinates)
-              .setPopup(popup)
-              .addTo(map.current!);
-          });
+              map.current.on('error', (e) => {
+                console.error('Map error:', e);
+              });
 
-          map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
-        }
+              // Add markers
+              data.locations.forEach((location: Location) => {
+                const popup = new mapboxgl.Popup({ offset: 25 })
+                  .setText(location.name);
+
+                new mapboxgl.Marker({ color: '#3b82f6' })
+                  .setLngLat(location.coordinates)
+                  .setPopup(popup)
+                  .addTo(map.current!);
+              });
+
+              map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+            } catch (error) {
+              console.error('Map initialization error:', error);
+            }
+          }
+        }, 100);
       }
     }).finally(() => {
       setLoading(false);
     });
 
     return () => {
-      map.current?.remove();
+      if (map.current) {
+        map.current.remove();
+        map.current = null;
+      }
     };
   }, [content]);
 
@@ -126,7 +153,11 @@ const TravelMap = ({ content }: TravelMapProps) => {
       <div className="p-3 border-b bg-muted/30">
         <div className="text-sm font-medium">📍 Recommended Locations ({locations.length})</div>
       </div>
-      <div ref={mapContainer} className="h-64 w-full" />
+      <div 
+        ref={mapContainer} 
+        className="h-64 w-full relative"
+        style={{ minHeight: '256px' }}
+      />
     </Card>
   );
 };
