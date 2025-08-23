@@ -88,7 +88,7 @@ export const useMessages = () => {
       try {
         const { error: aiError } = await supabase.functions.invoke('gemini-travel-suggestions', {
           body: { 
-            message: content.replace('@ai', '').trim() || 'Give me travel suggestions for Lisbon',
+            message: content.replace('@ai', '').trim() || 'Give me travel suggestions',
             userId: userId
           }
         });

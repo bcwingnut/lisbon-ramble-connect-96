@@ -55,18 +55,20 @@ serve(async (req) => {
       body: JSON.stringify({
         contents: [{
           parts: [{
-            text: `You are a helpful travel assistant specializing in Lisbon, Portugal.
+            text: `You are a helpful travel assistant for worldwide destinations.
 
 User's current message: "${message}"
 
 ${chatContext}
 
-Please respond in clear, well-structured GitHub-flavored Markdown:
+Please respond with city-specific recommendations based on the places mentioned (e.g., London, Tokyo, New York). If no destination is clear, ask one brief clarifying question first, then provide concise, high-value suggestions.
+
+Respond in clear, well-structured GitHub-flavored Markdown:
 - Start with a concise title (##)
 - Use short sections with bullet points
 - Bold key place names and important tips
 - Include practical details (best time, how to get there, price ranges) when helpful
-- **IMPORTANT: Include real, working URLs to restaurant websites, attraction sites, and experience booking pages whenever possible**
+- Include real, working URLs to official sites and booking pages when possible
 - Format links as: [Place Name](https://actual-website-url.com)
 - Keep it friendly and under 200 words`
           }]
