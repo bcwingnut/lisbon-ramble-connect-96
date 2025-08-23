@@ -9,7 +9,7 @@ export interface Message {
   profiles: {
     username: string;
     avatar_url?: string;
-  } | null;
+  };
 }
 
 export const useMessages = () => {
@@ -22,11 +22,8 @@ export const useMessages = () => {
       const { data, error } = await supabase
         .from('messages')
         .select(`
-          id,
-          content,
-          created_at,
-          user_id,
-          profiles!messages_user_id_fkey (
+          *,
+          profiles (
             username,
             avatar_url
           )
@@ -58,11 +55,8 @@ export const useMessages = () => {
           const { data } = await supabase
             .from('messages')
             .select(`
-              id,
-              content,
-              created_at,
-              user_id,
-              profiles!messages_user_id_fkey (
+              *,
+              profiles (
                 username,
                 avatar_url
               )
