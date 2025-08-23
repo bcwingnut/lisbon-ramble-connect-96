@@ -29,17 +29,26 @@ const UserLocationMap = ({ users }: UserLocationMapProps) => {
 
   console.log('UserLocationMap received users:', users);
 
+  console.log('🔍 UserLocationMap Debug Info:');
+  console.log('- Raw users received:', users.length);
+  console.log('- Users data:', users.map(u => ({ username: u.username, location_text: u.location_text, location_coordinates: u.location_coordinates })));
+
   // Filter users with valid coordinates and parse PostgreSQL point format
   const usersWithLocations: UserLocation[] = users
     .filter(user => {
-      console.log('Checking user for location:', user.username, 'coordinates:', user.location_coordinates, 'text:', user.location_text);
-      return user.location_coordinates;
+      console.log('🔍 Checking user for location:', user.username, 'coordinates:', user.location_coordinates, 'text:', user.location_text);
+      const hasCoords = user.location_coordinates;
+      console.log('- Has coordinates?', hasCoords);
+      return hasCoords;
     })
     .map(user => {
+      console.log('🔍 Processing user:', user.username);
       // Parse PostgreSQL point format "(x,y)" to coordinates
       let coordinates: [number, number] = [0, 0];
       if (user.location_coordinates && typeof user.location_coordinates === 'string') {
+        console.log('- Coordinate string:', user.location_coordinates);
         const match = user.location_coordinates.match(/\(([^,]+),([^)]+)\)/);
+        console.log('- Regex match:', match);
         if (match) {
           coordinates = [parseFloat(match[1]), parseFloat(match[2])];
           console.log('✅ Parsed coordinates for', user.username, ':', coordinates);
@@ -50,17 +59,19 @@ const UserLocationMap = ({ users }: UserLocationMapProps) => {
         console.log('❌ No valid coordinates string for', user.username, ':', typeof user.location_coordinates, user.location_coordinates);
       }
       
-      return {
+      const result = {
         id: user.id,
         username: user.username,
         avatar_url: user.avatar_url,
         location_text: user.location_text,
         coordinates
       };
+      console.log('- Final user object:', result);
+      return result;
     })
     .filter(user => {
       const hasValidCoords = user.coordinates[0] !== 0 && user.coordinates[1] !== 0;
-      console.log('User', user.username, 'has valid coordinates:', hasValidCoords, user.coordinates);
+      console.log('🔍 User', user.username, 'has valid coordinates:', hasValidCoords, user.coordinates);
       return hasValidCoords;
     });
 
