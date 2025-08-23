@@ -38,7 +38,7 @@ serve(async (req) => {
     for (const locationName of locations.slice(0, 10)) { // Limit to 10 locations
       try {
         const response = await fetch(
-          `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(locationName)}.json?access_token=${MAPBOX_TOKEN}&limit=1`
+          `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(locationName)}.json?access_token=${MAPBOX_TOKEN}&limit=1&proximity=-9.1393,38.7223&country=pt`
         )
         
         if (response.ok) {

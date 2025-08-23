@@ -21,26 +21,35 @@ const TravelMap = ({ content }: TravelMapProps) => {
 
   // Extract location names from content
   const extractLocations = (text: string): string[] => {
-    // Look for patterns that might be locations
-    const patterns = [
-      /\*\*([^*]+)\*\*/g, // Bold text (markdown)
-      /(?:visit|try|explore|go to|check out)\s+([A-Z][a-zA-Z\s]+?)(?:[.,!]|$)/gi,
-      /([A-Z][a-zA-Z\s]+(?:Restaurant|Cafe|Hotel|Museum|Park|Beach|Market|Temple|Church|Square|Street|Avenue))/gi,
-    ];
-    
     const foundLocations = new Set<string>();
     
-    patterns.forEach(pattern => {
+    // Extract specific place names (proper nouns and landmarks)
+    const specificPlaces = [
+      // Common Lisbon landmarks
+      /\b(Jerónimos Monastery|Belém Tower|São Jorge Castle|Alfama|Bairro Alto|Chiado|Rossio|Cais do Sodré|LX Factory|Pastéis de Belém|Time Out Market Lisboa|Miradouro da Senhora do Monte|Ponte 25 de Abril|Cristo Rei|Oceanário|Gulbenkian Museum|Fado Museum|Tram 28|Elevador de Santa Justa)\b/gi,
+      
+      // Bold locations in markdown
+      /\*\*([A-Z][a-zA-Z\s]+(?:Monastery|Tower|Castle|Museum|Market|Restaurant|Cafe|Hotel|Park|Beach|Temple|Church|Square|District|Quarter|Neighborhood))\*\*/gi,
+      
+      // Places with specific keywords
+      /(?:visit|explore|go to|check out|head to|stop by)\s+([A-Z][a-zA-Z\s]+(?:Monastery|Tower|Castle|Museum|Market|Restaurant|Cafe|Hotel|Park|Beach|Temple|Church|Square|District))/gi,
+    ];
+    
+    specificPlaces.forEach(pattern => {
       let match;
       while ((match = pattern.exec(text)) !== null) {
-        const location = match[1]?.trim();
-        if (location && location.length > 2 && location.length < 50) {
-          foundLocations.add(location);
+        const location = (match[1] || match[0])?.trim();
+        if (location && location.length > 3 && location.length < 50) {
+          // Filter out common generic terms
+          const genericTerms = ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Must-sees', 'Local Experience', 'Food', 'Practical Tip', 'Best time', 'Price range', 'What', 'How to get there', 'Where', 'Tip', 'Again'];
+          if (!genericTerms.some(term => location.toLowerCase().includes(term.toLowerCase()))) {
+            foundLocations.add(location);
+          }
         }
       }
     });
 
-    return Array.from(foundLocations).slice(0, 8); // Limit to 8 locations
+    return Array.from(foundLocations).slice(0, 6); // Limit to 6 locations for better map display
   };
 
   useEffect(() => {
