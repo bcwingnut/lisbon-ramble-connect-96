@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { MapPin, X } from 'lucide-react';
+import { MapPin, X, Navigation } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -15,6 +15,7 @@ interface LocationInputProps {
 const LocationInput = ({ currentLocation, onLocationUpdate }: LocationInputProps) => {
   const [location, setLocation] = useState(currentLocation || '');
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isGettingGPS, setIsGettingGPS] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -83,6 +84,102 @@ const LocationInput = ({ currentLocation, onLocationUpdate }: LocationInputProps
     }
   };
 
+  const handleGPSLocation = async () => {
+    if (!user || !navigator.geolocation) {
+      toast({
+        title: "GPS not available",
+        description: "Your device doesn't support GPS location.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsGettingGPS(true);
+
+    try {
+      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 300000 // 5 minutes
+        });
+      });
+
+      const { latitude, longitude } = position.coords;
+      const coordinates = `(${longitude},${latitude})`;
+      
+      console.log('GPS coordinates obtained:', coordinates);
+
+      // Try to reverse geocode to get location name
+      let locationText = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+      
+      try {
+        // Use a reverse geocoding service if available
+        const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${await getMapboxToken()}&types=place,locality,neighborhood`);
+        const data = await response.json();
+        
+        if (data.features && data.features.length > 0) {
+          locationText = data.features[0].place_name || locationText;
+        }
+      } catch (geocodeError) {
+        console.warn('Reverse geocoding failed, using coordinates:', geocodeError);
+      }
+
+      // Update the user's profile
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          location_text: locationText,
+          location_coordinates: coordinates
+        })
+        .eq('user_id', user.id);
+
+      if (error) {
+        throw error;
+      }
+
+      setLocation(locationText);
+      onLocationUpdate(locationText);
+      
+      toast({
+        title: "GPS location updated",
+        description: `Your location is now set to ${locationText}`
+      });
+    } catch (error) {
+      console.error('Error getting GPS location:', error);
+      let errorMessage = "Failed to get your GPS location.";
+      
+      if (error instanceof GeolocationPositionError) {
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage = "Location permission denied. Please enable location access.";
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = "GPS location unavailable.";
+            break;
+          case error.TIMEOUT:
+            errorMessage = "GPS location request timed out.";
+            break;
+        }
+      }
+      
+      toast({
+        title: "GPS Error",
+        description: errorMessage,
+        variant: "destructive"
+      });
+    } finally {
+      setIsGettingGPS(false);
+    }
+  };
+
+  const getMapboxToken = async () => {
+    const { data } = await supabase.functions.invoke('geocode-locations', {
+      body: { locations: [] }
+    });
+    return data?.mapboxToken;
+  };
+
   const handleRemoveLocation = async () => {
     if (!user) return;
     
@@ -149,14 +246,27 @@ const LocationInput = ({ currentLocation, onLocationUpdate }: LocationInputProps
           )}
         </div>
         
-        <Button
-          onClick={handleUpdateLocation}
-          disabled={isUpdating || location === currentLocation}
-          className="w-full"
-          size="sm"
-        >
-          {isUpdating ? 'Updating...' : 'Update Location'}
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={handleUpdateLocation}
+            disabled={isUpdating || isGettingGPS || location === currentLocation}
+            className="flex-1"
+            size="sm"
+          >
+            {isUpdating ? 'Updating...' : 'Update Location'}
+          </Button>
+          
+          <Button
+            onClick={handleGPSLocation}
+            disabled={isUpdating || isGettingGPS}
+            variant="outline"
+            size="sm"
+            className="px-3"
+          >
+            <Navigation className="h-4 w-4" />
+            {isGettingGPS && <span className="ml-2">...</span>}
+          </Button>
+        </div>
         
         <p className="text-xs text-muted-foreground">
           Share your location to appear on the travelers map
