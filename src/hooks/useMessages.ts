@@ -23,7 +23,7 @@ export const useMessages = () => {
         .from('messages')
         .select(`
           *,
-          profiles (
+          profiles!messages_user_id_fkey (
             username,
             avatar_url
           )
@@ -56,7 +56,7 @@ export const useMessages = () => {
             .from('messages')
             .select(`
               *,
-              profiles (
+              profiles!messages_user_id_fkey (
                 username,
                 avatar_url
               )

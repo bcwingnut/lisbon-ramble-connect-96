@@ -1,8 +1,13 @@
 import { Button } from '@/components/ui/button';
 import { LogOut, MapPin } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { ReactNode } from 'react';
 
-const ChatHeader = () => {
+interface ChatHeaderProps {
+  children?: ReactNode;
+}
+
+const ChatHeader = ({ children }: ChatHeaderProps) => {
   const { signOut, user } = useAuth();
 
   const handleSignOut = async () => {
@@ -20,6 +25,7 @@ const ChatHeader = () => {
       </div>
       
       <div className="flex items-center gap-2">
+        {children}
         <span className="text-sm text-muted-foreground hidden sm:block">
           Welcome back!
         </span>

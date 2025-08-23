@@ -1,10 +1,13 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useMessages } from '@/hooks/useMessages';
 import { useToast } from '@/hooks/use-toast';
 import ChatHeader from '@/components/ChatHeader';
 import ChatMessage from '@/components/ChatMessage';
 import ChatInput from '@/components/ChatInput';
+import UsersSidebar from '@/components/UsersSidebar';
+import { Button } from '@/components/ui/button';
+import { PanelRightOpen, PanelRightClose } from 'lucide-react';
 import Auth from './Auth';
 
 const Index = () => {
@@ -12,6 +15,7 @@ const Index = () => {
   const { messages, loading: messagesLoading, sendMessage } = useMessages();
   const { toast } = useToast();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -50,41 +54,62 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <ChatHeader />
-      
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {messagesLoading ? (
-            <div className="flex items-center justify-center py-8">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
-            </div>
-          ) : messages.length === 0 ? (
-            <div className="text-center py-8">
-              <div className="text-4xl mb-4">🇵🇹</div>
-              <h3 className="text-lg font-semibold mb-2">Welcome to Lisbon Travelers!</h3>
-              <p className="text-muted-foreground max-w-md mx-auto">
-                Share your travel plans, ask for recommendations, and connect with fellow 
-                travelers exploring the beautiful city of Lisbon.
-              </p>
-            </div>
-          ) : (
-            messages.map((message) => (
-              <ChatMessage
-                key={message.id}
-                message={message}
-                isOwn={message.user_id === user.id}
-              />
-            ))
-          )}
-          <div ref={messagesEndRef} />
-        </div>
+    <div className="min-h-screen flex bg-background">
+      {/* Main Chat Area */}
+      <div className="flex-1 flex flex-col">
+        <ChatHeader>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="ml-auto"
+          >
+            {sidebarOpen ? (
+              <PanelRightClose className="h-4 w-4" />
+            ) : (
+              <PanelRightOpen className="h-4 w-4" />
+            )}
+          </Button>
+        </ChatHeader>
         
-        <ChatInput 
-          onSendMessage={handleSendMessage}
-          disabled={messagesLoading}
-        />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {messagesLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+              </div>
+            ) : messages.length === 0 ? (
+              <div className="text-center py-8">
+                <div className="text-4xl mb-4">🇵🇹</div>
+                <h3 className="text-lg font-semibold mb-2">Welcome to Lisbon Travelers!</h3>
+                <p className="text-muted-foreground max-w-md mx-auto">
+                  Share your travel plans, ask for recommendations, and connect with fellow 
+                  travelers exploring the beautiful city of Lisbon.
+                </p>
+              </div>
+            ) : (
+              messages.map((message) => (
+                <ChatMessage
+                  key={message.id}
+                  message={message}
+                  isOwn={message.user_id === user.id}
+                />
+              ))
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+          
+          <ChatInput 
+            onSendMessage={handleSendMessage}
+            disabled={messagesLoading}
+          />
+        </div>
       </div>
+
+      {/* Users Sidebar */}
+      {sidebarOpen && (
+        <UsersSidebar className="w-64 h-screen" />
+      )}
     </div>
   );
 };
