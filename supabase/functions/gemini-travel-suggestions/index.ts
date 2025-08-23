@@ -139,7 +139,7 @@ Respond in clear, well-structured GitHub-flavored Markdown:
     // Insert AI response as a message with special prefix from the bot user
     const { error: insertError } = await supabase
       .from('messages')
-      .insert([{ content: `🤖 AI: ${aiResponse}`, user_id: botUserId! }]);
+      .insert([{ content: `🤖 **AI Travel Assistant:**\n\n${aiResponse}`, user_id: botUserId! }]);
 
     if (insertError) {
       console.error('Error inserting AI response:', insertError);
