@@ -18,7 +18,7 @@ export const useUsers = () => {
     const fetchUsers = async () => {
       const { data, error } = await supabase
         .from('profiles')
-        .select('*')
+        .select('id, user_id, username, avatar_url, created_at, updated_at')
         .order('username', { ascending: true });
 
       if (error) {

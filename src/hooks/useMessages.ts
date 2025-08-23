@@ -8,7 +8,6 @@ export interface Message {
   user_id: string;
   profiles: {
     username: string;
-    avatar_url?: string;
   };
 }
 
@@ -24,8 +23,7 @@ export const useMessages = () => {
         .select(`
           *,
           profiles!messages_user_id_fkey (
-            username,
-            avatar_url
+            username
           )
         `)
         .order('created_at', { ascending: true });
@@ -57,8 +55,7 @@ export const useMessages = () => {
             .select(`
               *,
               profiles!messages_user_id_fkey (
-                username,
-                avatar_url
+                username
               )
             `)
             .eq('id', payload.new.id)
