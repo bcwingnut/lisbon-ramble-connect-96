@@ -82,6 +82,25 @@ export const useMessages = () => {
       console.error('Error sending message:', error);
       return false;
     }
+
+    // Check if message starts with @ai to trigger Gemini response
+    if (content.trim().toLowerCase().startsWith('@ai')) {
+      try {
+        const { error: aiError } = await supabase.functions.invoke('gemini-travel-suggestions', {
+          body: { 
+            message: content.replace('@ai', '').trim() || 'Give me travel suggestions for Lisbon',
+            userId: userId
+          }
+        });
+        
+        if (aiError) {
+          console.error('Error calling Gemini function:', aiError);
+        }
+      } catch (error) {
+        console.error('Error invoking Gemini function:', error);
+      }
+    }
+
     return true;
   };
 
