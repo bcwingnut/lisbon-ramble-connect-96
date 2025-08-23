@@ -7,6 +7,8 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+const formatCity = (slug: string) => slug.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -27,7 +29,7 @@ serve(async (req) => {
 
     console.log('Calling Gemini API for travel suggestions...');
 
-    // Fetch recent chat history from the sender
+    // Fetch recent chat history for this location (city chat)
     const { data: recentMessages } = await supabase
       .from('messages')
       .select(`
@@ -37,13 +39,13 @@ serve(async (req) => {
           username
         )
       `)
-      .eq('user_id', userId)
+      .eq('location', location)
       .order('created_at', { ascending: false })
-      .limit(5);
+      .limit(20);
 
-    // Build context from recent messages
+    // Build context from recent messages (most recent last)
     const chatContext = recentMessages && recentMessages.length > 0 
-      ? `\n\nRecent messages from this user:\n${recentMessages.reverse().map((msg: any) => `- ${msg.content}`).join('\n')}`
+      ? `\n\nRecent messages in ${formatCity(location)} chat:\n${[...recentMessages].reverse().map((msg: any) => `- ${(msg?.profiles?.username || 'User')}: ${msg.content}`).join('\n')}`
       : '';
 
     // Call Gemini API
@@ -55,22 +57,7 @@ serve(async (req) => {
       body: JSON.stringify({
         contents: [{
           parts: [{
-            text: `You are a helpful travel assistant for worldwide destinations.
-
-User's current message: "${message}"
-
-${chatContext}
-
-Please respond with city-specific recommendations based on the places mentioned (e.g., London, Tokyo, New York). If no destination is clear, ask one brief clarifying question first, then provide concise, high-value suggestions.
-
-Respond in clear, well-structured GitHub-flavored Markdown:
-- Start with a concise title (##)
-- Use short sections with bullet points
-- Bold key place names and important tips
-- Include practical details (best time, how to get there, price ranges) when helpful
-- Include real, working URLs to official sites and booking pages when possible
-- Format links as: [Place Name](https://actual-website-url.com)
-- Keep it friendly and under 200 words`
+            text: `You are a helpful travel assistant for city-based chat rooms.\n\nCity: ${formatCity(location)}\n\nUser's current message: "${message}"\n\n${chatContext}\n\nRespond with recommendations relevant to this city's context and the user's request. If the request is unrelated to the city, briefly note that and ask one concise clarifying question before offering general tips.\n\nRespond in clear, well-structured GitHub-flavored Markdown:\n- Start with a concise title (##)\n- Use short sections with bullet points\n- Bold key place names and important tips\n- Include practical details (best time, how to get there, price ranges) when helpful\n- Include real, working URLs to official sites and booking pages when possible\n- Format links as: [Place Name](https://actual-website-url.com)\n- Keep it friendly and under 200 words`
           }]
         }],
         generationConfig: {

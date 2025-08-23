@@ -6,6 +6,7 @@ export interface Message {
   content: string;
   created_at: string;
   user_id: string;
+  location?: string;
   profiles: {
     username: string;
   };
@@ -66,7 +67,7 @@ export const useMessages = (location?: string) => {
             .eq('id', payload.new.id)
             .single();
 
-          if (data) {
+          if (data && (!location || data.location === location)) {
             setMessages(prev => [...prev, data]);
           }
         }
