@@ -87,7 +87,10 @@ export const useMessages = () => {
     if (content.trim().toLowerCase().startsWith('@ai')) {
       try {
         const { error: aiError } = await supabase.functions.invoke('gemini-travel-suggestions', {
-          body: { message: content.replace('@ai', '').trim() || 'Give me travel suggestions for Lisbon' }
+          body: { 
+            message: content.replace('@ai', '').trim() || 'Give me travel suggestions for Lisbon',
+            userId: userId
+          }
         });
         
         if (aiError) {

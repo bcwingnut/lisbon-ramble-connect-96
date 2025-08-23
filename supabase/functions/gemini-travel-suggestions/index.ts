@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { message } = await req.json();
+    const { message, userId } = await req.json();
     
     const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
     if (!geminiApiKey) {
@@ -59,29 +59,12 @@ serve(async (req) => {
 
     console.log('Gemini response received, inserting as message...');
 
-    // Get the authorization header to identify the user
-    const authHeader = req.headers.get('authorization');
-    if (!authHeader) {
-      throw new Error('No authorization header');
-    }
-
-    // Set up supabase with user context
-    const supabaseWithAuth = createClient(supabaseUrl, supabaseKey, {
-      global: { headers: { authorization: authHeader } }
-    });
-
-    // Get current user
-    const { data: { user } } = await supabaseWithAuth.auth.getUser();
-    if (!user) {
-      throw new Error('No authenticated user');
-    }
-
     // Insert AI response as a message with special prefix
     const { error: insertError } = await supabase
       .from('messages')
       .insert([{
         content: `🤖 AI: ${aiResponse}`,
-        user_id: user.id
+        user_id: userId
       }]);
 
     if (insertError) {
