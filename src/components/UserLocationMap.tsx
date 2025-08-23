@@ -124,23 +124,48 @@ const UserLocationMap = ({ users }: UserLocationMapProps) => {
         console.log('Got Mapbox token, creating map with', usersWithLocations.length, 'users');
         mapboxgl.accessToken = data.mapboxToken;
 
-        // Calculate bounds for all user locations
-        const bounds = new mapboxgl.LngLatBounds();
-        usersWithLocations.forEach(user => {
-          console.log('Adding user to bounds:', user.username, user.coordinates);
-          bounds.extend(user.coordinates);
-        });
+        // Calculate center and zoom for locations
+        let center: [number, number];
+        let zoom: number;
+        
+        if (usersWithLocations.length === 1) {
+          // For single location, center on that point with appropriate zoom
+          center = usersWithLocations[0].coordinates;
+          zoom = 12;
+        } else {
+          // For multiple locations, calculate bounds
+          const bounds = new mapboxgl.LngLatBounds();
+          usersWithLocations.forEach(user => {
+            console.log('Adding user to bounds:', user.username, user.coordinates);
+            bounds.extend(user.coordinates);
+          });
+          
+          // Use the center of bounds
+          const boundsCenter = bounds.getCenter();
+          center = [boundsCenter.lng, boundsCenter.lat];
+          zoom = 8;
+        }
+
+        console.log('Map center:', center, 'zoom:', zoom);
 
         // Initialize map
         map.current = new mapboxgl.Map({
           container: mapContainer.current,
           style: 'mapbox://styles/mapbox/light-v11',
-          bounds: bounds,
-          fitBoundsOptions: { padding: 20, maxZoom: 10 },
+          center: center,
+          zoom: zoom,
           attributionControl: false
         });
 
+        // Fit bounds for multiple locations after map loads
         map.current.on('load', () => {
+          if (usersWithLocations.length > 1) {
+            const bounds = new mapboxgl.LngLatBounds();
+            usersWithLocations.forEach(user => {
+              bounds.extend(user.coordinates);
+            });
+            map.current?.fitBounds(bounds, { padding: 20, maxZoom: 10 });
+          }
           console.log('User location map loaded successfully');
           setLoading(false);
         });
