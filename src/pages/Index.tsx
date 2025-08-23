@@ -106,10 +106,15 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Users Sidebar */}
+      {/* Users Sidebar - Fixed position to stay visible during scroll */}
       {sidebarOpen && (
-        <UsersSidebar className="w-64 h-screen" />
+        <div className="fixed top-0 right-0 h-screen bg-card border-l z-10">
+          <UsersSidebar className="w-64 h-full" />
+        </div>
       )}
+      
+      {/* Spacer to prevent content from going under fixed sidebar */}
+      {sidebarOpen && <div className="w-64 flex-shrink-0" />}
     </div>
   );
 };

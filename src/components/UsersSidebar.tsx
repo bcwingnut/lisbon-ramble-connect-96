@@ -27,16 +27,16 @@ const UsersSidebar = ({ className = '' }: UsersSidebarProps) => {
   }
 
   return (
-    <div className={`bg-card border-r ${className}`}>
-      <div className="p-4 border-b">
+    <div className={`bg-card border-r flex flex-col ${className}`}>
+      <div className="p-4 border-b flex-shrink-0">
         <div className="flex items-center gap-2">
           <Users className="h-5 w-5 text-primary" />
           <h2 className="font-semibold">Travelers ({users.length})</h2>
         </div>
       </div>
       
-      <ScrollArea className="h-full">
-        <div className="p-2 space-y-2">
+      <ScrollArea className="flex-1 p-1">
+        <div className="space-y-2 p-2">
           {users.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               <Users className="h-8 w-8 mx-auto mb-2 opacity-50" />
