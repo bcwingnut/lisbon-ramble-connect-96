@@ -68,9 +68,10 @@ const UserLocationMap = ({ users }: UserLocationMapProps) => {
     const initMap = async () => {
       console.log('Initializing user location map');
       
+      // Wait for container to be available
       if (!mapContainer.current) {
-        console.log('No map container available');
-        setLoading(false);
+        console.log('Map container not ready, retrying...');
+        setTimeout(initMap, 100);
         return;
       }
       
