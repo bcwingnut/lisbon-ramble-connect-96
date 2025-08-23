@@ -27,8 +27,9 @@ const UserLocationMap = ({ users }: UserLocationMapProps) => {
   const map = useRef<mapboxgl.Map | null>(null);
   const [loading, setLoading] = useState(true);
 
-  console.log('🗺️ UserLocationMap component rendered with', users.length, 'users');
-  console.log('🗺️ Full users data:', users);
+  console.log('🗺️ UserLocationMap MOUNT - component rendered with', users.length, 'users');
+  console.log('🗺️ UserLocationMap MOUNT - full users data:', users);
+  console.log('🗺️ UserLocationMap MOUNT - users with coordinates:', users.filter(u => u.location_coordinates));
 
   // Memoize the filtered users calculation to avoid unnecessary re-renders
   const usersWithLocations: UserLocation[] = useMemo(() => {
