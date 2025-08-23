@@ -16,7 +16,7 @@ const ChatMessage = ({ message, isOwn }: ChatMessageProps) => {
       {!isOwn && (
         <Avatar className="h-8 w-8 mt-1">
           <AvatarFallback className="text-xs bg-accent text-accent-foreground">
-            {message.profiles.username.slice(0, 2).toUpperCase()}
+            {message.profiles?.username?.slice(0, 2).toUpperCase() || '??'}
           </AvatarFallback>
         </Avatar>
       )}
@@ -24,7 +24,7 @@ const ChatMessage = ({ message, isOwn }: ChatMessageProps) => {
       <div className={`flex flex-col max-w-[70%] ${isOwn ? 'items-end' : 'items-start'}`}>
         {!isOwn && (
           <span className="text-xs text-muted-foreground mb-1 px-1">
-            {message.profiles.username}
+            {message.profiles?.username || 'Unknown User'}
           </span>
         )}
         
