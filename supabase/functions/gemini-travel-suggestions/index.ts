@@ -20,10 +20,10 @@ serve(async (req) => {
       throw new Error('Gemini API key not configured');
     }
 
-    // Create Supabase client
+    // Create Supabase client with service role to bypass RLS
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     console.log('Calling Gemini API for travel suggestions...');
 
