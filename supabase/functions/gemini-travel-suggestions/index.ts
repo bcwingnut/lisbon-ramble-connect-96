@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { message, userId } = await req.json();
+    const { message } = await req.json();
     
     const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
     if (!geminiApiKey) {
@@ -59,13 +59,46 @@ serve(async (req) => {
 
     console.log('Gemini response received, inserting as message...');
 
-    // Insert AI response as a message with special prefix
+    // Ensure AI bot user exists
+    const BOT_USERNAME = 'AI Travel Assistant';
+    const BOT_EMAIL = 'ai-travel-assistant@system.local';
+
+    let botUserId: string | null = null;
+
+    const { data: existingProfile } = await supabase
+      .from('profiles')
+      .select('user_id')
+      .eq('username', BOT_USERNAME)
+      .limit(1)
+      .maybeSingle();
+
+    if (existingProfile?.user_id) {
+      botUserId = existingProfile.user_id as string;
+    } else {
+      const { data: createdUser, error: createUserError } = await supabase.auth.admin.createUser({
+        email: BOT_EMAIL,
+        password: 'This-Is-A-System-Only-Account-1234567890',
+        email_confirm: true,
+        user_metadata: { username: BOT_USERNAME }
+      });
+      if (createUserError || !createdUser?.user?.id) {
+        console.error('Failed to create bot user:', createUserError);
+        throw new Error('Failed to create bot user');
+      }
+      botUserId = createdUser.user.id;
+
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert([{ user_id: botUserId, username: BOT_USERNAME }]);
+      if (profileError) {
+        console.warn('Bot profile may already exist or failed to create:', profileError);
+      }
+    }
+
+    // Insert AI response as a message with special prefix from the bot user
     const { error: insertError } = await supabase
       .from('messages')
-      .insert([{
-        content: `🤖 AI: ${aiResponse}`,
-        user_id: userId
-      }]);
+      .insert([{ content: `🤖 AI: ${aiResponse}`, user_id: botUserId! }]);
 
     if (insertError) {
       console.error('Error inserting AI response:', insertError);

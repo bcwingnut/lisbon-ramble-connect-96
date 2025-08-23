@@ -1,4 +1,4 @@
 project_id = "pdpzxubfvxpsaharfrha"
 
 [functions.gemini-travel-suggestions]
-verify_jwt = false
+verify_jwt = true
