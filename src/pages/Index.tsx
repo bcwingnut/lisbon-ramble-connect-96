@@ -8,6 +8,7 @@ import ChatInput from '@/components/ChatInput';
 import UsersSidebar from '@/components/UsersSidebar';
 import { Button } from '@/components/ui/button';
 import { PanelRightOpen, PanelRightClose } from 'lucide-react';
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 import Auth from './Auth';
 
 const Index = () => {
@@ -54,67 +55,71 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen flex bg-background">
-      {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col">
-        <ChatHeader>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="ml-auto"
-          >
-            {sidebarOpen ? (
-              <PanelRightClose className="h-4 w-4" />
-            ) : (
-              <PanelRightOpen className="h-4 w-4" />
-            )}
-          </Button>
-        </ChatHeader>
-        
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            {messagesLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+    <div className="min-h-screen bg-background">
+      <ResizablePanelGroup direction="horizontal" className="min-h-screen">
+        {/* Main Chat Area */}
+        <ResizablePanel defaultSize={sidebarOpen ? 75 : 100} minSize={50}>
+          <div className="flex flex-col h-full">
+            <ChatHeader>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="ml-auto"
+              >
+                {sidebarOpen ? (
+                  <PanelRightClose className="h-4 w-4" />
+                ) : (
+                  <PanelRightOpen className="h-4 w-4" />
+                )}
+              </Button>
+            </ChatHeader>
+            
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                {messagesLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                  </div>
+                ) : messages.length === 0 ? (
+                  <div className="text-center py-8">
+                    <div className="text-4xl mb-4">🇵🇹</div>
+                    <h3 className="text-lg font-semibold mb-2">Welcome to Lisbon Travelers!</h3>
+                    <p className="text-muted-foreground max-w-md mx-auto">
+                      Share your travel plans, ask for recommendations, and connect with fellow 
+                      travelers exploring the beautiful city of Lisbon.
+                    </p>
+                  </div>
+                ) : (
+                  messages.map((message) => (
+                    <ChatMessage
+                      key={message.id}
+                      message={message}
+                      isOwn={message.user_id === user.id}
+                    />
+                  ))
+                )}
+                <div ref={messagesEndRef} />
               </div>
-            ) : messages.length === 0 ? (
-              <div className="text-center py-8">
-                <div className="text-4xl mb-4">🇵🇹</div>
-                <h3 className="text-lg font-semibold mb-2">Welcome to Lisbon Travelers!</h3>
-                <p className="text-muted-foreground max-w-md mx-auto">
-                  Share your travel plans, ask for recommendations, and connect with fellow 
-                  travelers exploring the beautiful city of Lisbon.
-                </p>
-              </div>
-            ) : (
-              messages.map((message) => (
-                <ChatMessage
-                  key={message.id}
-                  message={message}
-                  isOwn={message.user_id === user.id}
-                />
-              ))
-            )}
-            <div ref={messagesEndRef} />
+              
+              <ChatInput 
+                onSendMessage={handleSendMessage}
+                disabled={messagesLoading}
+              />
+            </div>
           </div>
-          
-          <ChatInput 
-            onSendMessage={handleSendMessage}
-            disabled={messagesLoading}
-          />
-        </div>
-      </div>
+        </ResizablePanel>
 
-      {/* Users Sidebar - Fixed position to stay visible during scroll */}
-      {sidebarOpen && (
-        <div className="fixed top-0 right-0 h-screen bg-card border-l z-10">
-          <UsersSidebar className="w-64 h-full" />
-        </div>
-      )}
-      
-      {/* Spacer to prevent content from going under fixed sidebar */}
-      {sidebarOpen && <div className="w-64 flex-shrink-0" />}
+        {/* Resizable Handle */}
+        {sidebarOpen && <ResizableHandle withHandle />}
+
+        {/* Users Sidebar Panel */}
+        {sidebarOpen && (
+          <ResizablePanel defaultSize={25} minSize={20} maxSize={50}>
+            <UsersSidebar />
+          </ResizablePanel>
+        )}
+      </ResizablePanelGroup>
     </div>
   );
 };

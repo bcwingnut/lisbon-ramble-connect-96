@@ -68,10 +68,6 @@ const LocationInput = ({ currentLocation, onLocationUpdate }: LocationInputProps
 
       onLocationUpdate(location.trim() || null);
       
-      // Force immediate refresh of user data
-      console.log('🔄 Forcing immediate user data refresh...');
-      window.location.reload(); // Temporary debugging - force full refresh to see if data is actually saved
-      
       toast({
         title: "Location updated",
         description: location.trim() ? `Your location is now set to ${location}` : "Your location has been removed"

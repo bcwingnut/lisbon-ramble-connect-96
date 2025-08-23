@@ -7,11 +7,7 @@ import UserLocationMap from '@/components/UserLocationMap';
 import LocationInput from '@/components/LocationInput';
 import { useState, useEffect } from 'react';
 
-interface UsersSidebarProps {
-  className?: string;
-}
-
-const UsersSidebar = ({ className = '' }: UsersSidebarProps) => {
+const UsersSidebar = () => {
   const { users, loading, refetch } = useUsers();
   const { user } = useAuth();
   const [currentUserLocation, setCurrentUserLocation] = useState<string | null>(null);
@@ -25,8 +21,8 @@ const UsersSidebar = ({ className = '' }: UsersSidebarProps) => {
 
   if (loading) {
     return (
-      <div className={`bg-card border-r ${className}`}>
-        <div className="p-4 border-b">
+      <div className="bg-card h-full flex flex-col">
+        <div className="p-4 border-b flex-shrink-0">
           <div className="flex items-center gap-2">
             <Users className="h-5 w-5 text-primary" />
             <h2 className="font-semibold">Travelers</h2>
@@ -40,7 +36,8 @@ const UsersSidebar = ({ className = '' }: UsersSidebarProps) => {
   }
 
   return (
-    <div className={`bg-card border-r flex flex-col ${className}`}>
+    <div className="bg-card h-full flex flex-col">
+      {/* Fixed Header */}
       <div className="p-4 border-b flex-shrink-0">
         <div className="flex items-center gap-2">
           <Users className="h-5 w-5 text-primary" />
@@ -48,47 +45,53 @@ const UsersSidebar = ({ className = '' }: UsersSidebarProps) => {
         </div>
       </div>
       
-      <ScrollArea className="flex-1 p-1">
-        <div className="space-y-2 p-2">
-          {users.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <Users className="h-8 w-8 mx-auto mb-2 opacity-50" />
-              <p className="text-sm">No travelers yet</p>
-            </div>
-          ) : (
-            users.map((user) => (
-              <div
-                key={user.id}
-                className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
-              >
-                <Avatar className="h-8 w-8">
-                  <AvatarImage 
-                    src={user.avatar_url} 
-                    alt={user.username}
-                  />
-                  <AvatarFallback className="text-xs bg-primary/10 text-primary">
-                    {user.username.substring(0, 2).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">
-                    {user.username}
-                  </p>
-                  <div className="flex items-center gap-1">
-                    <div className="h-2 w-2 bg-success rounded-full"></div>
-                    <span className="text-xs text-muted-foreground">Online</span>
-                  </div>
-                  {user.location_text && (
-                    <p className="text-xs text-muted-foreground truncate mt-1">
-                      📍 {user.location_text}
-                    </p>
-                  )}
-                </div>
+      {/* Scrollable Users List */}
+      <div className="flex-1 overflow-hidden">
+        <ScrollArea className="h-full">
+          <div className="space-y-2 p-4">
+            {users.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <Users className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">No travelers yet</p>
               </div>
-            ))
-          )}
-        </div>
-        
+            ) : (
+              users.map((user) => (
+                <div
+                  key={user.id}
+                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
+                >
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage 
+                      src={user.avatar_url} 
+                      alt={user.username}
+                    />
+                    <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                      {user.username.substring(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">
+                      {user.username}
+                    </p>
+                    <div className="flex items-center gap-1">
+                      <div className="h-2 w-2 bg-success rounded-full"></div>
+                      <span className="text-xs text-muted-foreground">Online</span>
+                    </div>
+                    {user.location_text && (
+                      <p className="text-xs text-muted-foreground truncate mt-1">
+                        📍 {user.location_text}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </ScrollArea>
+      </div>
+      
+      {/* Fixed Footer - Map and Location Input */}
+      <div className="flex-shrink-0 border-t bg-background">
         <UserLocationMap users={users} />
         
         <LocationInput 
@@ -101,7 +104,7 @@ const UsersSidebar = ({ className = '' }: UsersSidebarProps) => {
             refetch();
           }}
         />
-      </ScrollArea>
+      </div>
     </div>
   );
 };
