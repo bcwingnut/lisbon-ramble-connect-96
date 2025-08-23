@@ -44,11 +44,13 @@ export default function LinkChips({ urls }: LinkChipsProps) {
     return () => { mounted = false; };
   }, [urls.join('|')]);
 
-  if (loading || previews.length === 0) return null;
+  const previewsWithImages = previews.filter(p => p.image);
+  
+  if (loading || previewsWithImages.length === 0) return null;
 
   return (
     <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2 w-full">
-      {previews.map((p) => (
+      {previewsWithImages.map((p) => (
         <a
           key={p.url}
           href={p.url}
