@@ -1,0 +1,61 @@
+import React from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
+import { MessageCircle, Bot } from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+const Navbar = () => {
+  const location = useLocation();
+
+  const navItems = [
+    {
+      path: '/',
+      label: 'Group Chat',
+      icon: MessageCircle,
+      description: 'Chat with other travelers'
+    },
+    {
+      path: '/personal-chatbot',
+      label: 'Personal Chatbot',
+      icon: Bot,
+      description: 'AI travel assistant'
+    }
+  ];
+
+  return (
+    <nav className="bg-card border-b border-border">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          <div className="flex">
+            <div className="flex-shrink-0 flex items-center">
+              <span className="text-xl font-bold text-primary">🇵🇹 Lisbon Connect</span>
+            </div>
+            <div className="ml-6 flex space-x-8">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = location.pathname === item.path;
+                
+                return (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    className={cn(
+                      'inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors',
+                      isActive
+                        ? 'border-b-2 border-primary text-primary'
+                        : 'text-muted-foreground hover:text-foreground hover:border-b-2 hover:border-muted-foreground'
+                    )}
+                  >
+                    <Icon className="h-4 w-4 mr-2" />
+                    {item.label}
+                  </NavLink>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+};
+
+export default Navbar;

@@ -6,6 +6,7 @@ import ChatHeader from '@/components/ChatHeader';
 import ChatMessage from '@/components/ChatMessage';
 import ChatInput from '@/components/ChatInput';
 import UsersSidebar from '@/components/UsersSidebar';
+import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import { PanelRightOpen, PanelRightClose } from 'lucide-react';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
@@ -55,8 +56,9 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <ResizablePanelGroup direction="horizontal" className="min-h-screen">
+    <div className="min-h-screen bg-background flex flex-col">
+      <Navbar />
+      <ResizablePanelGroup direction="horizontal" className="flex-1">
         {/* Main Chat Area */}
         <ResizablePanel defaultSize={sidebarOpen ? 75 : 100} minSize={50}>
           <div className="flex flex-col h-full">
