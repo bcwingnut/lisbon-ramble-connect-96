@@ -3,6 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import type { Message } from '@/hooks/useMessages';
 import Markdown from '@/components/Markdown';
+import LinkChips from '@/components/LinkChips';
 
 interface ChatMessageProps {
   message: Message;
@@ -11,6 +12,10 @@ interface ChatMessageProps {
 
 const ChatMessage = ({ message, isOwn }: ChatMessageProps) => {
   const timeAgo = formatDistanceToNow(new Date(message.created_at), { addSuffix: true });
+  const isAi = !isOwn && (message.profiles.username === 'AI Travel Assistant' || message.content.startsWith('🤖 AI:'));
+
+  // Extract URLs from content
+  const urls = (message.content.match(/https?:\/\/[^\s)]+/g) || []).slice(0, 6);
   
   return (
     <div className={`flex gap-3 ${isOwn ? 'justify-end' : 'justify-start'}`}>
@@ -31,6 +36,9 @@ const ChatMessage = ({ message, isOwn }: ChatMessageProps) => {
         
         <Card className={`p-3 ${isOwn ? 'bg-primary text-primary-foreground' : 'bg-card'}`}>
           <Markdown content={message.content} isInverted={isOwn} />
+          {isAi && urls.length > 0 && (
+            <LinkChips urls={urls} />
+          )}
         </Card>
         
         <span className="text-xs text-muted-foreground mt-1 px-1">
