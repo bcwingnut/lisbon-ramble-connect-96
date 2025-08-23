@@ -92,19 +92,16 @@ const UserLocationMap = ({ users }: UserLocationMapProps) => {
 
       console.log('✅ Users with locations found, proceeding with map init');
 
-      // Wait for container to be available with retries
-      let retries = 0;
-      while (!mapContainer.current && retries < 10) {
-        console.log('⏳ Map container not ready, retrying...', retries);
-        await new Promise(resolve => setTimeout(resolve, 100));
-        retries++;
-      }
-
+      // Use setTimeout to ensure DOM is ready before trying to access container
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       if (!mapContainer.current) {
-        console.error('❌ Map container never became available');
+        console.error('❌ Map container not available after DOM ready wait');
         setLoading(false);
         return;
       }
+
+      console.log('✅ Map container is ready, proceeding with initialization');
 
       try {
         console.log('🔑 Getting Mapbox token...');
