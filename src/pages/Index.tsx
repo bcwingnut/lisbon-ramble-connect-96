@@ -118,7 +118,9 @@ const Index = () => {
         {/* Users Sidebar Panel */}
         {sidebarOpen && (
           <ResizablePanel defaultSize={25} minSize={20} maxSize={50}>
-            <UsersSidebar />
+            <div className="h-full overflow-hidden">
+              <UsersSidebar />
+            </div>
           </ResizablePanel>
         )}
       </ResizablePanelGroup>
