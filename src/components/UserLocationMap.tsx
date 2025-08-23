@@ -27,7 +27,10 @@ const UserLocationMap = ({ users }: UserLocationMapProps) => {
   const [map, setMap] = useState<mapboxgl.Map | null>(null);
   const [loading, setLoading] = useState(true);
 
+  console.log('🗺️ UserLocationMap render - users:', users.length);
+
   const mapRef = useCallback((node: HTMLDivElement | null) => {
+    console.log('🗺️ mapRef callback called with node:', !!node);
     if (node !== null) {
       setMapContainer(node);
     }
@@ -35,73 +38,76 @@ const UserLocationMap = ({ users }: UserLocationMapProps) => {
 
   // Memoize the filtered users calculation to avoid unnecessary re-renders
   const usersWithLocations: UserLocation[] = useMemo(() => {
-    console.log('🔄 Recalculating usersWithLocations...');
-    return users
+    console.log('🔄 Recalculating usersWithLocations from', users.length, 'users');
+    const result = users
       .filter(user => {
-        console.log('🔍 Checking user for location:', user.username, 'coordinates:', user.location_coordinates, 'text:', user.location_text);
         const hasCoords = user.location_coordinates;
-        console.log('- Has coordinates?', hasCoords);
+        console.log('- User', user.username, 'has coordinates:', !!hasCoords);
         return hasCoords;
       })
       .map(user => {
-        console.log('🔍 Processing user:', user.username);
         // Parse PostgreSQL point format "(x,y)" to coordinates
         let coordinates: [number, number] = [0, 0];
         if (user.location_coordinates && typeof user.location_coordinates === 'string') {
-          console.log('- Coordinate string:', user.location_coordinates);
           const match = user.location_coordinates.match(/\(([^,]+),([^)]+)\)/);
-          console.log('- Regex match:', match);
           if (match) {
             coordinates = [parseFloat(match[1]), parseFloat(match[2])];
-            console.log('✅ Parsed coordinates for', user.username, ':', coordinates);
-          } else {
-            console.warn('❌ Could not parse coordinates for', user.username, ':', user.location_coordinates);
           }
-        } else {
-          console.log('❌ No valid coordinates string for', user.username, ':', typeof user.location_coordinates, user.location_coordinates);
         }
         
-        const result = {
+        return {
           id: user.id,
           username: user.username,
           avatar_url: user.avatar_url,
           location_text: user.location_text,
           coordinates
         };
-        console.log('- Final user object:', result);
-        return result;
       })
       .filter(user => {
         const hasValidCoords = user.coordinates[0] !== 0 && user.coordinates[1] !== 0;
-        console.log('🔍 User', user.username, 'has valid coordinates:', hasValidCoords, user.coordinates);
+        console.log('- User', user.username, 'has valid coordinates:', hasValidCoords, user.coordinates);
         return hasValidCoords;
       });
+    
+    console.log('🗺️ Final usersWithLocations:', result.length, result);
+    return result;
   }, [users]);
 
-  console.log('🗺️ Final filtered users with valid locations:', usersWithLocations.length, usersWithLocations);
-
   useEffect(() => {
+    console.log('🚀 useEffect triggered - usersWithLocations:', usersWithLocations.length, 'mapContainer:', !!mapContainer);
+    
     const initMap = async () => {
+      console.log('🚀 initMap called');
+      
       if (usersWithLocations.length === 0) {
+        console.log('⚠️ No users with locations, setting loading false');
         setLoading(false);
         return;
       }
 
       if (!mapContainer) {
+        console.log('⚠️ No map container available yet');
         return;
       }
 
+      console.log('✅ Proceeding with map initialization');
+
       try {
+        console.log('🔑 Getting Mapbox token...');
         // Get Mapbox token from our edge function
         const { data, error: tokenError } = await supabase.functions.invoke('geocode-locations', {
           body: { locations: [] }
         });
 
+        console.log('🔑 Token response:', { data: !!data, error: !!tokenError, token: !!data?.mapboxToken });
+
         if (tokenError || !data?.mapboxToken) {
+          console.error('❌ Failed to get Mapbox token:', tokenError);
           setLoading(false);
           return;
         }
 
+        console.log('✅ Got Mapbox token, initializing map');
         mapboxgl.accessToken = data.mapboxToken;
 
         // Calculate center and zoom for locations
@@ -111,6 +117,7 @@ const UserLocationMap = ({ users }: UserLocationMapProps) => {
         if (usersWithLocations.length === 1) {
           center = usersWithLocations[0].coordinates;
           zoom = 12;
+          console.log('📍 Single user mode - center:', center);
         } else {
           const bounds = new mapboxgl.LngLatBounds();
           usersWithLocations.forEach(user => {
@@ -120,9 +127,13 @@ const UserLocationMap = ({ users }: UserLocationMapProps) => {
           const boundsCenter = bounds.getCenter();
           center = [boundsCenter.lng, boundsCenter.lat];
           zoom = 8;
+          console.log('📍 Multiple users mode - center:', center);
         }
 
+        console.log('🗺️ Creating map with center:', center, 'zoom:', zoom);
+
         // Initialize map
+        console.log('🗺️ Creating new Mapbox map instance...');
         const newMap = new mapboxgl.Map({
           container: mapContainer,
           style: 'mapbox://styles/mapbox/light-v11',
@@ -131,10 +142,12 @@ const UserLocationMap = ({ users }: UserLocationMapProps) => {
           attributionControl: false
         });
 
+        console.log('🗺️ Map instance created, setting up event listeners');
         setMap(newMap);
 
         // Fit bounds for multiple locations after map loads
         newMap.on('load', () => {
+          console.log('✅ Map loaded successfully');
           if (usersWithLocations.length > 1) {
             const bounds = new mapboxgl.LngLatBounds();
             usersWithLocations.forEach(user => {
@@ -145,12 +158,15 @@ const UserLocationMap = ({ users }: UserLocationMapProps) => {
           setLoading(false);
         });
 
-        newMap.on('error', () => {
+        newMap.on('error', (e) => {
+          console.error('❌ Map error:', e);
           setLoading(false);
         });
 
         // Add user markers
+        console.log('📍 Adding', usersWithLocations.length, 'markers to map');
         usersWithLocations.forEach(user => {
+          console.log('📍 Adding marker for:', user.username, 'at:', user.coordinates);
           const markerDiv = document.createElement('div');
           markerDiv.className = 'user-location-marker';
           markerDiv.style.cssText = `
@@ -197,13 +213,16 @@ const UserLocationMap = ({ users }: UserLocationMapProps) => {
         });
 
         newMap.addControl(new mapboxgl.NavigationControl(), 'top-right');
+        console.log('✅ Map initialization complete');
       } catch (error) {
+        console.error('❌ Error in map initialization:', error);
         setLoading(false);
       }
     };
 
     // Clean up existing map
     if (map) {
+      console.log('🧹 Cleaning up existing map');
       map.remove();
       setMap(null);
     }
@@ -212,6 +231,7 @@ const UserLocationMap = ({ users }: UserLocationMapProps) => {
 
     return () => {
       if (map) {
+        console.log('🧹 Cleaning up map on unmount');
         map.remove();
         setMap(null);
       }
