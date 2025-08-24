@@ -1,6 +1,4 @@
-import { Button } from '@/components/ui/button';
-import { LogOut, MapPin } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
+import { MapPin } from 'lucide-react';
 import { ReactNode } from 'react';
 
 interface ChatHeaderProps {
@@ -11,11 +9,6 @@ interface ChatHeaderProps {
 }
 
 const ChatHeader = ({ children, locationName = 'Lisbon', locationFlag = '🇵🇹', locationDescription = 'Planning adventures in Portugal' }: ChatHeaderProps) => {
-  const { signOut, user } = useAuth();
-
-  const handleSignOut = async () => {
-    await signOut();
-  };
 
   return (
     <header className="flex items-center justify-between p-4 border-b bg-card">
@@ -28,10 +21,6 @@ const ChatHeader = ({ children, locationName = 'Lisbon', locationFlag = '🇵�
       </div>
       
       <div className="flex items-center gap-2">
-        <Button variant="pink-outline" size="sm" onClick={handleSignOut}>
-          <LogOut className="h-4 w-4 mr-2" />
-          Sign Out
-        </Button>
         {children}
       </div>
     </header>

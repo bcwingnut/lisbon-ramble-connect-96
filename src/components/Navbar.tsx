@@ -1,12 +1,19 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Bot, Hotel, MapPin } from 'lucide-react';
+import { Bot, Hotel, MapPin, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/useAuth';
+import { Button } from '@/components/ui/button';
 import LocationDropdown from './LocationDropdown';
 import love2GoLogo from '@/assets/love2go-logo-transparent.png';
 
 const Navbar = () => {
   const location = useLocation();
+  const { user, signOut } = useAuth();
+  
+  const handleSignOut = async () => {
+    await signOut();
+  };
 
   const navItems = [
     {
@@ -62,6 +69,19 @@ const Navbar = () => {
               })}
             </div>
           </div>
+          
+          {/* Right side - Welcome message and Sign Out */}
+          {user && (
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-muted-foreground">
+                Hi <span className="font-medium text-foreground">{user.user_metadata?.username || user.email?.split('@')[0] || 'User'}</span>
+              </span>
+              <Button variant="pink-outline" size="sm" onClick={handleSignOut}>
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </nav>
