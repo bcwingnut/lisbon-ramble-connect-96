@@ -17,22 +17,17 @@ serve(async (req) => {
   try {
     const { message, userId, isPersonalChat, location = 'lisbon', chatHistory = [] } = await req.json();
     
-    // Get Gemini API key from environment (with fallbacks)
-    const env = Deno.env.toObject();
-    const geminiApiKey = (env['GEMINI_API_KEY'] || env['GOOGLE_API_KEY'] || env['GOOGLE_GENAI_API_KEY'] || '').trim();
-    const usedVar = env['GEMINI_API_KEY'] ? 'GEMINI_API_KEY' : env['GOOGLE_API_KEY'] ? 'GOOGLE_API_KEY' : env['GOOGLE_GENAI_API_KEY'] ? 'GOOGLE_GENAI_API_KEY' : 'NONE';
+    // Get Mistral API key from environment
+    const mistralApiKey = Deno.env.get('MISTRAL_API_KEY');
     
     console.log('🔍 Travel Assistant Environment check:');
     console.log('- Function timestamp:', new Date().toISOString());
-    console.log('- Available env vars:', Object.keys(env).filter(k => k.includes('GEMINI') || k.includes('GOOGLE')));
-    console.log('- Using key from:', usedVar);
-    console.log('- API key exists:', !!geminiApiKey);
-    console.log('- API key length:', geminiApiKey.length);
-    console.log('- API key prefix:', geminiApiKey ? geminiApiKey.substring(0, 15) : 'N/A');
+    console.log('- Mistral API key exists:', !!mistralApiKey);
+    console.log('- API key length:', mistralApiKey ? mistralApiKey.length : 0);
     
-    if (!geminiApiKey) {
-      console.error('❌ Gemini API key is missing or empty');
-      throw new Error('Gemini API key not configured');
+    if (!mistralApiKey) {
+      console.error('❌ Mistral API key is missing or empty');
+      throw new Error('Mistral API key not configured');
     }
 
     // Create Supabase client with service role to bypass RLS
@@ -40,19 +35,14 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    console.log('Calling Gemini API for travel suggestions (personal/location)...');
+    console.log('Calling Mistral API for travel suggestions (personal/location)...');
 
-    let prompt;
+    let systemPrompt;
+    let userMessage;
     
     if (isPersonalChat) {
-      // Create context from chat history for personal chat
-      const context = chatHistory.length > 0 
-        ? `Previous conversation:\n${chatHistory.map((msg: any) => `${msg.role === 'assistant' ? 'Assistant' : 'User'}: ${msg.content}`).join('\n')}\n\n`
-        : '';
-
-      prompt = `You are a friendly, enthusiastic travel companion who loves chatting about all things travel-related. You're knowledgeable, curious, and genuinely interested in travel experiences, cultures, and destinations worldwide.
-
-${context}Current user message: "${message}"
+      // Personal chat system prompt
+      systemPrompt = `You are a friendly, enthusiastic travel companion who loves chatting about all things travel-related. You're knowledgeable, curious, and genuinely interested in travel experiences, cultures, and destinations worldwide.
 
 **Your personality:**
 - Warm, conversational, and genuinely curious about travel
@@ -69,9 +59,25 @@ ${context}Current user message: "${message}"
 - Sharing fascinating travel knowledge
 
 Respond naturally and conversationally, like you're chatting with a friend about travel. Keep it engaging but not overly long (2-3 paragraphs max). If they share experiences, respond warmly and ask follow-up questions!`;
+      
+      userMessage = message;
     } else {
-      // Location-based chat prompt
-      prompt = `You are a helpful travel assistant that provides personalized travel advice for destinations worldwide.\n\nUser's message: "${message}"\n\nRespond with helpful travel recommendations, tips, or information based on their request. You can provide advice about any destination, activity, or travel-related topic.\n\nRespond in clear, well-structured GitHub-flavored Markdown:\n- Start with a concise title (##) when appropriate\n- Use short sections with bullet points\n- Bold key place names and important tips\n- Include practical details (best time to visit, how to get there, price ranges) when helpful\n- Include real, working URLs to official sites and booking pages when possible\n- Format links as: [Place Name](https://actual-website-url.com)\n- Keep it friendly and conversational\n- If they ask about a specific destination, provide detailed local insights\n- If they ask general travel questions, provide comprehensive advice\n- Maximum 400 words`;
+      // Location-based chat system prompt
+      systemPrompt = `You are a helpful travel assistant that provides personalized travel advice for destinations worldwide. Respond with helpful travel recommendations, tips, or information based on their request. You can provide advice about any destination, activity, or travel-related topic.
+
+Respond in clear, well-structured GitHub-flavored Markdown:
+- Start with a concise title (##) when appropriate
+- Use short sections with bullet points
+- Bold key place names and important tips
+- Include practical details (best time to visit, how to get there, price ranges) when helpful
+- Include real, working URLs to official sites and booking pages when possible
+- Format links as: [Place Name](https://actual-website-url.com)
+- Keep it friendly and conversational
+- If they ask about a specific destination, provide detailed local insights
+- If they ask general travel questions, provide comprehensive advice
+- Maximum 400 words`;
+      
+      userMessage = message;
     }
 
     // Fetch recent chat history for location-based chat only
@@ -97,42 +103,57 @@ Respond naturally and conversationally, like you're chatting with a friend about
         : '';
     }
 
-    // Call Gemini API
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`, {
+    // Prepare messages for Mistral API
+    const messages = [
+      { role: 'system', content: systemPrompt }
+    ];
+    
+    // Add chat history for personal chat
+    if (isPersonalChat && chatHistory.length > 0) {
+      chatHistory.forEach((msg: any) => {
+        messages.push({
+          role: msg.role === 'assistant' ? 'assistant' : 'user',
+          content: msg.content
+        });
+      });
+    }
+    
+    // Add current user message (with context for location chat)
+    const finalUserMessage = isPersonalChat ? userMessage : userMessage + chatContext;
+    messages.push({ role: 'user', content: finalUserMessage });
+
+    // Call Mistral API
+    const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
       method: 'POST',
       headers: {
+        'Authorization': `Bearer ${mistralApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: prompt + (isPersonalChat ? '' : chatContext)
-          }]
-        }],
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 500,
-        },
+        model: 'mistral-large-latest',
+        messages: messages,
+        temperature: 0.7,
+        max_tokens: 500,
       }),
     });
 
-    console.log('Gemini API response status:', response.status);
+    console.log('Mistral API response status:', response.status);
     
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Gemini API error response:', errorText);
-      throw new Error(`Gemini API error: ${response.status} - ${errorText}`);
+      console.error('Mistral API error response:', errorText);
+      throw new Error(`Mistral API error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
-    const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    const aiResponse = data.choices?.[0]?.message?.content;
 
     if (!aiResponse) {
-      console.error('No response from Gemini API, full response:', JSON.stringify(data));
-      throw new Error('No response from Gemini API');
+      console.error('No response from Mistral API, full response:', JSON.stringify(data));
+      throw new Error('No response from Mistral API');
     }
 
-    console.log('✅ Successfully got response from Gemini API');
+    console.log('✅ Successfully got response from Mistral API');
 
     // If this is a personal chat, return the response directly
     if (isPersonalChat) {
@@ -147,7 +168,7 @@ Respond naturally and conversationally, like you're chatting with a friend about
       });
     }
 
-    console.log('Gemini response received, inserting as message...');
+    console.log('Mistral response received, inserting as message...');
 
     // Ensure AI bot user exists
     const BOT_USERNAME = 'AI Travel Assistant';

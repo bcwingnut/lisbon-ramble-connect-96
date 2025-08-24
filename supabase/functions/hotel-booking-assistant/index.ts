@@ -16,45 +16,28 @@ serve(async (req) => {
   try {
     const { message, userId, chatHistory = [] } = await req.json();
     
-    // Get Gemini API key from environment (with fallbacks)
-    const env = Deno.env.toObject();
-    const geminiApiKey = (env['GEMINI_API_KEY'] || env['GOOGLE_API_KEY'] || env['GOOGLE_GENAI_API_KEY'] || '').trim();
-    const usedVar = env['GEMINI_API_KEY'] ? 'GEMINI_API_KEY' : env['GOOGLE_API_KEY'] ? 'GOOGLE_API_KEY' : env['GOOGLE_GENAI_API_KEY'] ? 'GOOGLE_GENAI_API_KEY' : 'NONE';
+    // Get Mistral API key from environment
+    const mistralApiKey = Deno.env.get('MISTRAL_API_KEY');
     
     console.log('🔍 Environment check (booking):');
     console.log('- Function timestamp:', new Date().toISOString());
-    console.log('- Available env vars:', Object.keys(env).filter(k => k.includes('GEMINI') || k.includes('GOOGLE')));
-    console.log('- Using key from:', usedVar);
-    console.log('- API key exists:', !!geminiApiKey);
-    console.log('- API key length:', geminiApiKey.length);
-    console.log('- API key prefix:', geminiApiKey ? geminiApiKey.substring(0, 15) : 'N/A');
+    console.log('- Mistral API key exists:', !!mistralApiKey);
+    console.log('- API key length:', mistralApiKey ? mistralApiKey.length : 0);
     
-    if (!geminiApiKey) {
-      console.error('❌ Gemini API key is missing or empty');
-      throw new Error('Gemini API key not configured');
+    if (!mistralApiKey) {
+      console.error('❌ Mistral API key is missing or empty');
+      throw new Error('Mistral API key not configured');
     }
 
-    // Create context from chat history
-    const context = chatHistory.length > 0 
-      ? `Previous conversation:\n${chatHistory.map((msg: any) => `${msg.isBot ? 'Assistant' : 'User'}: ${msg.content}`).join('\n')}\n\n`
-      : '';
-
-    console.log('✅ Calling Gemini API for hotel booking assistance...');
+    console.log('✅ Calling Mistral API for hotel booking assistance...');
     console.log('- Request message length:', message.length);
     console.log('- Chat history length:', chatHistory.length);
 
-    // Call Gemini API with specialized hotel booking prompt
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: `You are Sophia, an elegant and sophisticated hotel concierge who SPECIALIZES EXCLUSIVELY in hotel and hostel accommodations. You have years of experience in luxury hospitality and personally curated relationships with accommodations worldwide - from budget hostels to luxury resorts.
-
-${context}User's current message: "${message}"
+    // Prepare messages for Mistral API
+    const messages = [
+      {
+        role: 'system',
+        content: `You are Sophia, an elegant and sophisticated hotel concierge who SPECIALIZES EXCLUSIVELY in hotel and hostel accommodations. You have years of experience in luxury hospitality and personally curated relationships with accommodations worldwide - from budget hostels to luxury resorts.
 
 **CRITICAL: You ONLY help with hotels, hostels, and accommodation bookings. If users ask about anything else (restaurants, flights, activities, general travel advice), politely redirect them to use the Personal Travel Assistant for those topics.**
 
@@ -83,27 +66,52 @@ ${context}User's current message: "${message}"
 - Focus on the stay experience and location benefits
 
 Keep responses focused on accommodations, conversational, and under 250 words.`
-          }]
-        }],
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 600,
-        },
+      }
+    ];
+
+    // Add chat history
+    if (chatHistory.length > 0) {
+      chatHistory.forEach((msg: any) => {
+        messages.push({
+          role: msg.isBot ? 'assistant' : 'user',
+          content: msg.content
+        });
+      });
+    }
+    
+    // Add current message
+    messages.push({ role: 'user', content: message });
+
+    // Call Mistral API
+    const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${mistralApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'mistral-large-latest',
+        messages: messages,
+        temperature: 0.7,
+        max_tokens: 600,
       }),
     });
 
     if (!response.ok) {
-      throw new Error(`Gemini API error: ${response.status}`);
+      const errorText = await response.text();
+      console.error('Mistral API error response:', errorText);
+      throw new Error(`Mistral API error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
-    const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    const aiResponse = data.choices?.[0]?.message?.content;
 
     if (!aiResponse) {
-      throw new Error('No response from Gemini API');
+      console.error('No response from Mistral API, full response:', JSON.stringify(data));
+      throw new Error('No response from Mistral API');
     }
 
-    console.log('Gemini response received, sending back to client...');
+    console.log('Mistral response received, sending back to client...');
 
     return new Response(JSON.stringify({ 
       response: aiResponse,
