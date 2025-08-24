@@ -24,6 +24,7 @@ serve(async (req) => {
     console.log('- Function timestamp:', new Date().toISOString());
     console.log('- Mistral API key exists:', !!mistralApiKey);
     console.log('- API key length:', mistralApiKey ? mistralApiKey.length : 0);
+    console.log('- API key starts with:', mistralApiKey ? mistralApiKey.substring(0, 10) + '...' : 'N/A');
     
     if (!mistralApiKey) {
       console.error('❌ Mistral API key is missing or empty');
@@ -36,7 +37,10 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     console.log('Calling Mistral API for travel suggestions (personal/location)...');
-
+    console.log('- Is personal chat:', isPersonalChat);
+    console.log('- Chat history length:', chatHistory.length);
+    console.log('- Message length:', message.length);
+    
     let systemPrompt;
     let userMessage;
     
@@ -122,6 +126,10 @@ Respond in clear, well-structured GitHub-flavored Markdown:
     const finalUserMessage = isPersonalChat ? userMessage : userMessage + chatContext;
     messages.push({ role: 'user', content: finalUserMessage });
 
+    console.log('📤 Calling Mistral API with', messages.length, 'messages');
+    console.log('- System prompt length:', systemPrompt.length);
+    console.log('- Final user message length:', finalUserMessage.length);
+
     // Call Mistral API
     const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
       method: 'POST',
@@ -137,23 +145,26 @@ Respond in clear, well-structured GitHub-flavored Markdown:
       }),
     });
 
-    console.log('Mistral API response status:', response.status);
+    console.log('📥 Mistral API response status:', response.status);
+    console.log('- Response headers:', Object.fromEntries(response.headers.entries()));
     
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Mistral API error response:', errorText);
+      console.error('❌ Mistral API error response:', errorText);
       throw new Error(`Mistral API error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
+    console.log('📋 Mistral API response data keys:', Object.keys(data));
+    console.log('- Choices length:', data.choices?.length);
     const aiResponse = data.choices?.[0]?.message?.content;
 
     if (!aiResponse) {
-      console.error('No response from Mistral API, full response:', JSON.stringify(data));
+      console.error('❌ No response from Mistral API, full response:', JSON.stringify(data, null, 2));
       throw new Error('No response from Mistral API');
     }
 
-    console.log('✅ Successfully got response from Mistral API');
+    console.log('✅ Successfully got response from Mistral API, length:', aiResponse.length);
 
     // If this is a personal chat, return the response directly
     if (isPersonalChat) {
