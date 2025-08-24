@@ -103,7 +103,7 @@ const TravelerMap = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Map Section */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 space-y-6">
             <Card className="p-6">
               <div className="mb-4">
                 <h2 className="text-lg font-semibold mb-2">Global Activities Map</h2>
@@ -114,30 +114,8 @@ const TravelerMap = () => {
               
               <UserLocationMap users={realUsers} />
             </Card>
-          </div>
 
-          {/* Sidebar with travelers list and location input */}
-          <div className="space-y-6">
-            {/* Location Input */}
-            <Card className="p-6">
-              <div className="mb-4">
-                <h3 className="text-lg font-semibold mb-2">Share Your Location</h3>
-                <p className="text-sm text-muted-foreground">
-                  Let other travelers know where you are or where you're planning to go.
-                </p>
-              </div>
-              
-              <LocationInput 
-                currentLocation={currentUserLocation} 
-                onLocationUpdate={(location) => {
-                  console.log('Location updated:', location);
-                  setCurrentUserLocation(location);
-                  refetch();
-                }}
-              />
-            </Card>
-
-            {/* Recent Activities */}
+            {/* Recent Activities - moved from sidebar */}
             <Card className="p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Activity className="h-5 w-5 text-primary" />
@@ -192,6 +170,28 @@ const TravelerMap = () => {
                   </div>
                 </ScrollArea>
               )}
+            </Card>
+          </div>
+
+          {/* Sidebar with location input and destination activities */}
+          <div className="space-y-6">
+            {/* Location Input */}
+            <Card className="p-6">
+              <div className="mb-4">
+                <h3 className="text-lg font-semibold mb-2">Share Your Location</h3>
+                <p className="text-sm text-muted-foreground">
+                  Let other travelers know where you are or where you're planning to go.
+                </p>
+              </div>
+              
+              <LocationInput 
+                currentLocation={currentUserLocation} 
+                onLocationUpdate={(location) => {
+                  console.log('Location updated:', location);
+                  setCurrentUserLocation(location);
+                  refetch();
+                }}
+              />
             </Card>
 
             {/* Popular Destination Activities */}
