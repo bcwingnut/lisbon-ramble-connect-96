@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { format } from 'date-fns';
@@ -44,6 +45,29 @@ const Booking = () => {
   const [checkInDate, setCheckInDate] = useState<Date>();
   const [checkOutDate, setCheckOutDate] = useState<Date>();
   const [showBookingForm, setShowBookingForm] = useState(true);
+  const [selectedBreakfast, setSelectedBreakfast] = useState<string>('');
+  const [selectedRoomType, setSelectedRoomType] = useState<string>('');
+
+  // Sample hotel options (these could be populated from chat history)
+  const breakfastOptions = [
+    { value: 'continental', label: 'Continental Breakfast' },
+    { value: 'american', label: 'American Breakfast' },
+    { value: 'buffet', label: 'Buffet Breakfast' },
+    { value: 'room-service', label: 'In-Room Breakfast' },
+    { value: 'none', label: 'No Breakfast' }
+  ];
+
+  const roomTypeOptions = [
+    { value: 'standard', label: 'Standard Room' },
+    { value: 'deluxe', label: 'Deluxe Room' },
+    { value: 'suite', label: 'Suite' },
+    { value: 'executive', label: 'Executive Room' },
+    { value: 'presidential', label: 'Presidential Suite' }
+  ];
+
+  const sampleHotelImages = [
+    '🏨', '🏛️', '🏰', '🌴', '⛰️', '🏖️'
+  ];
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -372,13 +396,57 @@ const Booking = () => {
                 </div>
               </div>
 
-              <Button 
-                onClick={handleFormSubmit}
-                className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
-                size="lg"
-              >
-                ✨ Find My Perfect Hotel
-              </Button>
+              {/* Hotel Pictures Gallery */}
+              <div className="mb-6">
+                <Label className="block mb-3">Featured Hotels</Label>
+                <div className="grid grid-cols-3 gap-4">
+                  {sampleHotelImages.slice(0, 3).map((emoji, index) => (
+                    <div key={index} className="relative group cursor-pointer">
+                      <div className="aspect-video bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 rounded-lg flex items-center justify-center text-4xl group-hover:scale-105 transition-transform">
+                        {emoji}
+                      </div>
+                      <div className="absolute inset-0 bg-black/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <span className="text-white text-xs font-medium">View Details</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Breakfast and Room Type Selection */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div className="space-y-2">
+                  <Label>Breakfast Preference</Label>
+                  <Select value={selectedBreakfast} onValueChange={setSelectedBreakfast}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Choose breakfast option" />
+                    </SelectTrigger>
+                    <SelectContent className="z-50 bg-background border border-border">
+                      {breakfastOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Room Type</Label>
+                  <Select value={selectedRoomType} onValueChange={setSelectedRoomType}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Choose room type" />
+                    </SelectTrigger>
+                    <SelectContent className="z-50 bg-background border border-border">
+                      {roomTypeOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
             </Card>
           </div>
         )}
