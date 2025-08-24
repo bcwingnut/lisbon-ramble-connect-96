@@ -11,13 +11,16 @@ const UsersSidebar = () => {
   const { users, loading, refetch } = useUsers();
   const { user } = useAuth();
   const [currentUserLocation, setCurrentUserLocation] = useState<string | null>(null);
+  
+  // Filter out AI Travel Assistant from users list
+  const realUsers = users.filter(u => u.username !== 'AI Travel Assistant');
 
   useEffect(() => {
-    if (user && users.length > 0) {
-      const currentUser = users.find(u => u.user_id === user.id);
+    if (user && realUsers.length > 0) {
+      const currentUser = realUsers.find(u => u.user_id === user.id);
       setCurrentUserLocation(currentUser?.location_text || null);
     }
-  }, [user, users]);
+  }, [user, realUsers]);
 
   if (loading) {
     return (
@@ -41,7 +44,7 @@ const UsersSidebar = () => {
       <div className="p-4 border-b flex-shrink-0 bg-background">
         <div className="flex items-center gap-2">
           <Users className="h-5 w-5 text-pink" />
-          <h2 className="font-semibold">Travelers ({users.length})</h2>
+          <h2 className="font-semibold">Travelers ({realUsers.length})</h2>
         </div>
       </div>
       
@@ -49,13 +52,13 @@ const UsersSidebar = () => {
       <div className="flex-1 overflow-hidden">
         <ScrollArea className="h-full">
           <div className="space-y-2 p-4 pb-2">
-            {users.length === 0 ? (
+            {realUsers.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 <Users className="h-8 w-8 mx-auto mb-2 opacity-50" />
                 <p className="text-sm">No travelers yet</p>
               </div>
             ) : (
-              users.map((user) => (
+              realUsers.map((user) => (
                 <div
                   key={user.id}
                   className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
