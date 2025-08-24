@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/Navbar';
 import ChatMessage from '@/components/ChatMessage';
 import ChatInput from '@/components/ChatInput';
+import Markdown from '@/components/Markdown';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Calendar, MapPin, Users, Star, Wifi, Car, Coffee, Utensils } from 'lucide-react';
@@ -28,14 +29,7 @@ interface BookingMessage {
 const Booking = () => {
   const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
-  const [messages, setMessages] = useState<BookingMessage[]>([
-    {
-      id: '1',
-      content: "Welcome to AI Hotel Booking! 🏨 I'm your AI assistant ready to help you find the perfect accommodation anywhere in the world. Tell me about your travel plans - where are you going, when are you visiting, how many guests, and what type of experience are you looking for?",
-      isBot: true,
-      timestamp: new Date()
-    }
-  ]);
+  const [messages, setMessages] = useState<BookingMessage[]>([]);
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -46,6 +40,56 @@ const Booking = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Load existing chat messages on mount
+  useEffect(() => {
+    const loadMessages = async () => {
+      if (!user) return;
+
+      try {
+        const { data: chatMessages, error } = await supabase
+          .from('chat_messages' as any)
+          .select('*')
+          .eq('user_id', user.id)
+          .is('booking_id', null) // For now, we'll use null booking_id for hotel chat
+          .order('created_at', { ascending: true });
+
+        if (error) {
+          console.error('Error loading chat messages:', error);
+          return;
+        }
+
+        if (chatMessages && chatMessages.length > 0) {
+          const formattedMessages: BookingMessage[] = chatMessages.map((msg: any) => ({
+            id: msg.id,
+            content: msg.content,
+            isBot: msg.role === 'assistant',
+            timestamp: new Date(msg.created_at)
+          }));
+          setMessages(formattedMessages);
+        } else {
+          // Add welcome message if no chat history
+          setMessages([{
+            id: '1',
+            content: "Welcome to AI Hotel Booking! 🏨 I'm your AI assistant ready to help you find the perfect accommodation anywhere in the world. Tell me about your travel plans - where are you going, when are you visiting, how many guests, and what type of experience are you looking for?",
+            isBot: true,
+            timestamp: new Date()
+          }]);
+        }
+      } catch (error) {
+        console.error('Error loading chat messages:', error);
+        // Add welcome message on error
+        setMessages([{
+          id: '1',
+          content: "Welcome to AI Hotel Booking! 🏨 I'm your AI assistant ready to help you find the perfect accommodation anywhere in the world. Tell me about your travel plans - where are you going, when are you visiting, how many guests, and what type of experience are you looking for?",
+          isBot: true,
+          timestamp: new Date()
+        }]);
+      }
+    };
+
+    loadMessages();
+  }, [user]);
 
   // Sample hotel data for demonstration
   const sampleHotels = [
@@ -100,37 +144,70 @@ const Booking = () => {
   const handleSendMessage = async (content: string) => {
     if (!user) return;
 
-    const userMessage: BookingMessage = {
-      id: Date.now().toString(),
-      content,
-      isBot: false,
-      timestamp: new Date()
-    };
-
-    setMessages(prev => [...prev, userMessage]);
     setLoading(true);
 
     try {
+      // Save user message to database
+      const { data: userMessageData, error: userError } = await supabase
+        .from('chat_messages' as any)
+        .insert({
+          content: content,
+          role: 'user',
+          user_id: user.id
+        })
+        .select()
+        .single();
+
+      if (userError) {
+        throw userError;
+      }
+
+      const userMessage: BookingMessage = {
+        id: (userMessageData as any).id,
+        content,
+        isBot: false,
+        timestamp: new Date((userMessageData as any).created_at)
+      };
+
+      setMessages(prev => [...prev, userMessage]);
+
+      // Get AI response
       const aiResponse = await callBookingAssistant(content);
       
+      // Save AI response to database
+      const { data: aiMessageData, error: aiError } = await supabase
+        .from('chat_messages' as any)
+        .insert({
+          content: aiResponse,
+          role: 'assistant',
+          user_id: user.id
+        })
+        .select()
+        .single();
+
+      if (aiError) {
+        throw aiError;
+      }
+
       const botResponse: BookingMessage = {
-        id: Date.now().toString(),
+        id: (aiMessageData as any).id,
         content: aiResponse,
         isBot: true,
-        timestamp: new Date()
+        timestamp: new Date((aiMessageData as any).created_at)
       };
 
       setMessages(prev => [...prev, botResponse]);
     } catch (error) {
-      console.error('Error getting AI response:', error);
+      console.error('Error handling message:', error);
       toast({
         title: "Error",
-        description: "Failed to get AI response. Please try again.",
+        description: "Failed to send message. Please try again.",
         variant: "destructive",
       });
       
+      // Add error message to local state only (don't save to DB)
       const errorResponse: BookingMessage = {
-        id: Date.now().toString(),
+        id: `error-${Date.now()}`,
         content: "I'm sorry, I'm having trouble right now. Please try again or let me know what destination you're interested in visiting!",
         isBot: true,
         timestamp: new Date()
@@ -240,7 +317,7 @@ const Booking = () => {
                         : 'bg-primary text-primary-foreground'
                     }`}
                   >
-                    <div className="whitespace-pre-wrap text-sm">{message.content}</div>
+                    <Markdown content={message.content} isInverted={!message.isBot} />
                     <div className="text-xs opacity-70 mt-2">
                       {message.timestamp.toLocaleTimeString()}
                     </div>
