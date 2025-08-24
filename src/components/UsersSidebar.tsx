@@ -21,8 +21,8 @@ const UsersSidebar = () => {
 
   if (loading) {
     return (
-      <div className="bg-card h-full flex flex-col">
-        <div className="p-4 border-b flex-shrink-0 bg-card">
+        <div className="bg-background h-full flex flex-col">
+          <div className="p-4 border-b flex-shrink-0 bg-background">
           <div className="flex items-center gap-2">
           <Users className="h-5 w-5 text-pink" />
           <h2 className="font-semibold">Travelers</h2>
@@ -36,9 +36,9 @@ const UsersSidebar = () => {
   }
 
   return (
-    <div className="bg-card h-full flex flex-col">
+    <div className="bg-background h-full flex flex-col">
       {/* Fixed Header - Always visible at top */}
-      <div className="p-4 border-b flex-shrink-0 bg-card">
+      <div className="p-4 border-b flex-shrink-0 bg-background">
         <div className="flex items-center gap-2">
           <Users className="h-5 w-5 text-pink" />
           <h2 className="font-semibold">Travelers ({users.length})</h2>
@@ -91,7 +91,7 @@ const UsersSidebar = () => {
       </div>
       
       {/* Fixed Footer - Location Input Only */}
-      <div className="flex-shrink-0 border-t bg-card">
+      <div className="flex-shrink-0 border-t bg-background">
         <LocationInput 
           currentLocation={currentUserLocation} 
           onLocationUpdate={(location) => {
