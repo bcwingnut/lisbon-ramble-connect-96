@@ -28,9 +28,6 @@ const ChatHeader = ({ children, locationName = 'Lisbon', locationFlag = 'ðŸ‡µðŸ‡
       </div>
       
       <div className="flex items-center gap-2">
-        <span className="text-sm text-muted-foreground hidden sm:block">
-          Welcome back!
-        </span>
         <Button variant="pink-outline" size="sm" onClick={handleSignOut}>
           <LogOut className="h-4 w-4 mr-2" />
           Sign Out
