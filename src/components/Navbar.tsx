@@ -17,9 +17,9 @@ const Navbar = () => {
     },
     {
       path: '/traveler-map',
-      label: 'Traveler Map',
+      label: 'Activities',
       icon: MapPin,
-      description: 'See where travelers are located'
+      description: 'See what other travelers are doing'
     },
     {
       path: '/booking',
