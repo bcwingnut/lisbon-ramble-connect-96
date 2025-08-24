@@ -128,10 +128,24 @@ const PersonalChatbot = () => {
       });
 
       if (error) {
+        console.error('Function invocation error:', error);
         throw error;
       }
 
-      const aiResponse = data.response || 'I apologize, but I encountered an issue. Could you please try asking again?';
+      // Handle both success and error responses from the function
+      let aiResponse: string;
+      if (data?.success === false && data?.response) {
+        // Function returned an error but provided fallback content
+        aiResponse = data.response;
+        console.warn('Using fallback response due to function error:', data.error);
+      } else if (data?.response) {
+        // Normal successful response
+        aiResponse = data.response;
+      } else {
+        // Unexpected response format
+        aiResponse = 'I apologize, but I encountered an issue. Could you please try asking again?';
+        console.error('Unexpected response format:', data);
+      }
 
       // Save AI response to database
       const { data: aiMessageData, error: aiError } = await supabase

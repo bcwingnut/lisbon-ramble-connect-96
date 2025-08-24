@@ -77,21 +77,34 @@ serve(async (req) => {
       }),
     });
 
+    console.log('Gemini API response status:', response.status);
+    
     if (!response.ok) {
-      throw new Error(`Gemini API error: ${response.status}`);
+      const errorText = await response.text();
+      console.error('Gemini API error response:', errorText);
+      throw new Error(`Gemini API error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
-    const aiResponse = data.candidates[0]?.content?.parts[0]?.text;
+    const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
     if (!aiResponse) {
+      console.error('No response from Gemini API, full response:', JSON.stringify(data));
       throw new Error('No response from Gemini API');
     }
 
+    console.log('✅ Successfully got response from Gemini API');
+
     // If this is a personal chat, return the response directly
     if (isPersonalChat) {
-      return new Response(JSON.stringify({ response: aiResponse }), {
+      console.log('✅ Returning personal chat response');
+      return new Response(JSON.stringify({ 
+        response: aiResponse,
+        success: true,
+        timestamp: new Date().toISOString()
+      }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200
       });
     }
 
@@ -153,8 +166,17 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error in gemini-travel-suggestions function:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
+    
+    // Return a more helpful error response with fallback content
+    const fallbackResponse = "I apologize, but I'm experiencing some technical difficulties right now. Please try asking your travel question again in a moment, or feel free to ask about specific destinations, hotels, restaurants, or activities you're interested in!";
+    
+    return new Response(JSON.stringify({ 
+      error: error.message,
+      response: fallbackResponse,
+      success: false,
+      timestamp: new Date().toISOString()
+    }), {
+      status: 200, // Return 200 status with error info so the client can handle it gracefully
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
