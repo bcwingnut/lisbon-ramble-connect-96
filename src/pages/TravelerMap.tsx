@@ -27,18 +27,30 @@ const TravelerMap = () => {
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        // Fetch user activities
+        // Fetch user activities and profiles separately, then join in JavaScript
         const { data: userActivitiesData, error: userError } = await supabase
           .from('user_activities')
-          .select(`
-            *,
-            profiles!inner(username, location_text)
-          `);
+          .select('*')
+          .order('created_at', { ascending: false });
+          
+        const { data: profilesData, error: profilesError } = await supabase
+          .from('profiles')
+          .select('user_id, username, location_text');
           
         if (userError) {
           console.error('Error fetching user activities:', userError);
+        } else if (profilesError) {
+          console.error('Error fetching profiles:', profilesError);
         } else {
-          setUserActivities(userActivitiesData || []);
+          // Join activities with profiles manually
+          const activitiesWithProfiles = userActivitiesData?.map(activity => ({
+            ...activity,
+            profiles: profilesData?.find(profile => profile.user_id === activity.user_id)
+          })) || [];
+          
+          console.log('✅ Fetched user activities:', activitiesWithProfiles.length);
+          console.log('📝 Sample activity:', activitiesWithProfiles[0]);
+          setUserActivities(activitiesWithProfiles);
         }
 
         // Fetch destination activities  
