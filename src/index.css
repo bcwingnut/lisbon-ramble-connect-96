@@ -12,22 +12,22 @@ All colors MUST be HSL.
     --background: 0 0% 100%; /* White background */
     --foreground: 164 83% 14%; /* #064232 - Dark forest green text */
 
-    --card: 14 80% 95%;
+    --card: 172 35% 95%; /* Light green card background */
     --card-foreground: 164 83% 14%;
 
-    --popover: 14 80% 95%;
+    --popover: 172 35% 95%; /* Light green popover background */
     --popover-foreground: 164 83% 14%;
 
     --primary: 172 25% 45%; /* #568F87 - Sage green */
     --primary-foreground: 14 100% 97%;
 
-    --secondary: 172 35% 65%; /* More green - Forest sage */
+    --secondary: 172 30% 85%; /* Light green for backgrounds */
     --secondary-foreground: 164 83% 14%;
 
-    --muted: 14 50% 92%;
+    --muted: 172 25% 92%; /* Light green muted background */
     --muted-foreground: 164 40% 35%;
 
-    --accent: 172 35% 65%; /* More green - Forest sage */
+    --accent: 172 30% 85%; /* Light green for backgrounds */
     --accent-foreground: 164 83% 14%;
 
     --brand: 172 25% 45%; /* #568F87 - Sage green for brand */
@@ -36,19 +36,19 @@ All colors MUST be HSL.
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 14 40% 88%;
-    --input: 14 40% 88%;
+    --border: 172 25% 80%;
+    --input: 172 25% 80%;
     --ring: 172 25% 45%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 14 80% 95%;
+    --sidebar-background: 172 30% 90%; /* Light green sidebar */
     --sidebar-foreground: 164 83% 14%;
     --sidebar-primary: 172 25% 45%;
     --sidebar-primary-foreground: 14 100% 97%;
-    --sidebar-accent: 14 50% 90%;
+    --sidebar-accent: 172 35% 85%; /* Light green accent */
     --sidebar-accent-foreground: 164 83% 14%;
-    --sidebar-border: 14 40% 85%;
+    --sidebar-border: 172 20% 75%;
     --sidebar-ring: 172 25% 45%;
   }
 
