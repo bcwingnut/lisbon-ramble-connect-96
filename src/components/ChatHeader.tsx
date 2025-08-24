@@ -28,7 +28,6 @@ const ChatHeader = ({ children, locationName = 'Lisbon', locationFlag = 'ðŸ‡µðŸ‡
       </div>
       
       <div className="flex items-center gap-2">
-        {children}
         <span className="text-sm text-muted-foreground hidden sm:block">
           Welcome back!
         </span>
@@ -36,6 +35,7 @@ const ChatHeader = ({ children, locationName = 'Lisbon', locationFlag = 'ðŸ‡µðŸ‡
           <LogOut className="h-4 w-4 mr-2" />
           Sign Out
         </Button>
+        {children}
       </div>
     </header>
   );
