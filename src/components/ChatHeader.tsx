@@ -5,9 +5,12 @@ import { ReactNode } from 'react';
 
 interface ChatHeaderProps {
   children?: ReactNode;
+  locationName?: string;
+  locationFlag?: string;
+  locationDescription?: string;
 }
 
-const ChatHeader = ({ children }: ChatHeaderProps) => {
+const ChatHeader = ({ children, locationName = 'Lisbon', locationFlag = '🇵🇹', locationDescription = 'Planning adventures in Portugal' }: ChatHeaderProps) => {
   const { signOut, user } = useAuth();
 
   const handleSignOut = async () => {
@@ -19,8 +22,8 @@ const ChatHeader = ({ children }: ChatHeaderProps) => {
       <div className="flex items-center gap-2">
         <MapPin className="h-6 w-6 text-primary" />
         <div>
-          <h1 className="text-lg font-semibold">Lisbon Travelers 🇵🇹</h1>
-          <p className="text-sm text-muted-foreground">Planning adventures in Portugal</p>
+          <h1 className="text-lg font-semibold">{locationName} Travelers {locationFlag}</h1>
+          <p className="text-sm text-muted-foreground">{locationDescription}</p>
         </div>
       </div>
       

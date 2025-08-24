@@ -104,7 +104,11 @@ const LocationChat = () => {
             <div className="flex flex-col h-full">
               {/* Fixed Chat Header */}
               <div className="flex-shrink-0">
-                <ChatHeader>
+                <ChatHeader 
+                  locationName={locationData.name}
+                  locationFlag={locationData.flag}
+                  locationDescription={`Connect with travelers exploring ${locationData.name}. ${locationData.description.split('. ')[1] || locationData.description}`}
+                >
                   <Button
                     variant="ghost"
                     size="sm"
