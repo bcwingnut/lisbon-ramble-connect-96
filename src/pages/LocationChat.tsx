@@ -13,30 +13,40 @@ import { PanelRightOpen, PanelRightClose } from 'lucide-react';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 import Auth from './Auth';
 
+// Import background images
+import lisbonBg from '@/assets/lisbon-background.jpg';
+import parisBg from '@/assets/paris-background.jpg';
+import japanBg from '@/assets/japan-background.jpg';
+import sanFranciscoBg from '@/assets/san-francisco-background.jpg';
+
 const locationConfig = {
   'lisbon': {
     name: 'Lisbon',
     flag: '🇵🇹',
     description: 'Share your travel plans, ask for recommendations, and connect with fellow travelers exploring the beautiful city of Lisbon.',
     welcome: 'Welcome to Lisbon Travelers!',
+    background: lisbonBg,
   },
   'paris': {
     name: 'Paris',
     flag: '🇫🇷',
     description: 'Connect with travelers exploring the City of Light. Share experiences, get recommendations, and plan your Parisian adventure.',
     welcome: 'Welcome to Paris Travelers!',
+    background: parisBg,
   },
   'japan': {
     name: 'Japan',
     flag: '🇯🇵',
     description: 'Discover Japan with fellow travelers. Share cultural experiences, travel tips, and connect with others exploring the Land of the Rising Sun.',
     welcome: 'Welcome to Japan Travelers!',
+    background: japanBg,
   },
   'san-francisco': {
     name: 'San Francisco',
     flag: '🇺🇸',
     description: 'Connect with travelers exploring the Golden Gate City. Share tech meetups, food spots, and Bay Area adventures.',
     welcome: 'Welcome to San Francisco Travelers!',
+    background: sanFranciscoBg,
   },
 };
 
@@ -97,11 +107,17 @@ const LocationChat = () => {
       <Navbar />
       
       {/* Main Content Area - Fixed Height */}
-      <div className="flex-1 flex overflow-hidden">
-        <ResizablePanelGroup direction="horizontal" className="h-full">
+      <div 
+        className="flex-1 flex overflow-hidden bg-cover bg-center bg-no-repeat relative"
+        style={{ backgroundImage: `url(${locationData.background})` }}
+      >
+        {/* Overlay for better readability */}
+        <div className="absolute inset-0 bg-black/40"></div>
+        
+        <ResizablePanelGroup direction="horizontal" className="h-full relative z-10">
           {/* Main Chat Area */}
           <ResizablePanel defaultSize={sidebarOpen ? 75 : 100} minSize={50}>
-            <div className="flex flex-col h-full">
+            <div className="flex flex-col h-full backdrop-blur-sm bg-background/80">
               {/* Fixed Chat Header */}
               <div className="flex-shrink-0">
                 <ChatHeader 
@@ -166,7 +182,9 @@ const LocationChat = () => {
           {/* Fixed Sidebar - Always Visible */}
           {sidebarOpen && (
             <ResizablePanel defaultSize={25} minSize={20} maxSize={50}>
-              <UsersSidebar />
+              <div className="backdrop-blur-sm bg-background/90 h-full">
+                <UsersSidebar />
+              </div>
             </ResizablePanel>
           )}
         </ResizablePanelGroup>
