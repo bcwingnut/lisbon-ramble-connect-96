@@ -8,6 +8,7 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -15,11 +16,18 @@ serve(async (req) => {
   try {
     const { message, userId, chatHistory = [] } = await req.json();
     
+    // Get Gemini API key from environment
     const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
-    console.log('🔑 API Key status:', geminiApiKey ? `Found (${geminiApiKey.length} chars, starts with: ${geminiApiKey.substring(0, 10)}...)` : 'NOT FOUND');
     
-    if (!geminiApiKey) {
-      console.error('❌ GEMINI_API_KEY environment variable is not set');
+    console.log('🔍 Environment check:');
+    console.log('- Function timestamp:', new Date().toISOString());
+    console.log('- Available env vars:', Object.keys(Deno.env.toObject()).filter(k => k.includes('GEMINI')));
+    console.log('- GEMINI_API_KEY exists:', !!geminiApiKey);
+    console.log('- GEMINI_API_KEY length:', geminiApiKey?.length || 0);
+    console.log('- GEMINI_API_KEY prefix:', geminiApiKey?.substring(0, 15) || 'N/A');
+    
+    if (!geminiApiKey || geminiApiKey.trim() === '') {
+      console.error('❌ GEMINI_API_KEY is missing or empty');
       throw new Error('Gemini API key not configured');
     }
 
@@ -28,7 +36,9 @@ serve(async (req) => {
       ? `Previous conversation:\n${chatHistory.map((msg: any) => `${msg.isBot ? 'Assistant' : 'User'}: ${msg.content}`).join('\n')}\n\n`
       : '';
 
-    console.log('Calling Gemini API for hotel booking assistance...');
+    console.log('✅ Calling Gemini API for hotel booking assistance...');
+    console.log('- Request message length:', message.length);
+    console.log('- Chat history length:', chatHistory.length);
 
     // Call Gemini API with specialized hotel booking prompt
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`, {
