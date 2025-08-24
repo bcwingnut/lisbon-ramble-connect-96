@@ -9,7 +9,7 @@ All colors MUST be HSL.
 @layer base {
   :root {
     /* Love2Go warm color palette */
-    --background: 14 100% 97%; /* #FFF5F2 - Soft peachy background */
+    --background: 0 0% 100%; /* White background */
     --foreground: 164 83% 14%; /* #064232 - Dark forest green text */
 
     --card: 14 80% 95%;
