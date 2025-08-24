@@ -8,90 +8,90 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Love2Go warm color palette */
-    --background: 0 0% 100%; /* White background */
-    --foreground: 164 83% 14%; /* #064232 - Dark forest green text */
+    /* Charming Seaside color palette with variations */
+    --background: 0 0% 100%; /* Pure white background */
+    --foreground: 204 65% 25%; /* Deep ocean blue text */
 
-    --card: 172 35% 95%; /* Light green card background */
-    --card-foreground: 164 83% 14%;
+    --card: 183 77% 85%; /* Light turquoise #C9FDF2 */
+    --card-foreground: 204 65% 25%;
 
-    --popover: 172 35% 95%; /* Light green popover background */
-    --popover-foreground: 164 83% 14%;
+    --popover: 183 77% 92%; /* Even lighter turquoise */
+    --popover-foreground: 204 65% 25%;
 
-    --primary: 172 25% 45%; /* #568F87 - Sage green */
-    --primary-foreground: 14 100% 97%;
+    --primary: 186 47% 68%; /* Medium turquoise #85D1DB */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 172 30% 85%; /* Light green for backgrounds */
-    --secondary-foreground: 164 83% 14%;
+    --secondary: 151 75% 83%; /* Light mint #B6F2D1 */
+    --secondary-foreground: 204 65% 25%;
 
-    --muted: 172 25% 92%; /* Light green muted background */
-    --muted-foreground: 164 40% 35%;
+    --muted: 183 77% 90%; /* Very light seafoam */
+    --muted-foreground: 204 45% 45%;
 
-    --accent: 172 30% 85%; /* Light green for backgrounds */
-    --accent-foreground: 164 83% 14%;
+    --accent: 187 73% 82%; /* Light turquoise #B3EBF2 */
+    --accent-foreground: 204 65% 25%;
 
-    --brand: 172 25% 45%; /* #568F87 - Sage green for brand */
-    --brand-foreground: 14 100% 97%;
+    --brand: 186 47% 68%; /* Medium turquoise for brand */
+    --brand-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 172 25% 80%;
-    --input: 172 25% 80%;
-    --ring: 172 25% 45%;
+    --border: 183 50% 75%; /* Subtle turquoise border */
+    --input: 183 50% 75%;
+    --ring: 186 47% 68%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 172 30% 90%; /* Light green sidebar */
-    --sidebar-foreground: 164 83% 14%;
-    --sidebar-primary: 172 25% 45%;
-    --sidebar-primary-foreground: 14 100% 97%;
-    --sidebar-accent: 172 35% 85%; /* Light green accent */
-    --sidebar-accent-foreground: 164 83% 14%;
-    --sidebar-border: 172 20% 75%;
-    --sidebar-ring: 172 25% 45%;
+    --sidebar-background: 151 75% 88%; /* Light mint sidebar */
+    --sidebar-foreground: 204 65% 25%;
+    --sidebar-primary: 186 47% 68%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 183 77% 85%; /* Light seafoam accent */
+    --sidebar-accent-foreground: 204 65% 25%;
+    --sidebar-border: 183 40% 70%;
+    --sidebar-ring: 186 47% 68%;
   }
 
   .dark {
-    --background: 164 83% 8%; /* Dark forest green base */
-    --foreground: 14 100% 97%; /* Soft peachy text */
+    --background: 204 65% 8%; /* Deep ocean background */
+    --foreground: 183 77% 92%; /* Light seafoam text */
 
-    --card: 164 70% 12%;
-    --card-foreground: 14 100% 97%;
+    --card: 204 50% 15%; /* Dark ocean card */
+    --card-foreground: 183 77% 85%;
 
-    --popover: 164 70% 12%;
-    --popover-foreground: 14 100% 97%;
+    --popover: 204 50% 12%; /* Darker popover */
+    --popover-foreground: 183 77% 85%;
 
-    --primary: 172 45% 75%; /* Lighter green for dark mode */
-    --primary-foreground: 164 83% 14%;
+    --primary: 151 75% 75%; /* Bright mint for dark mode */
+    --primary-foreground: 204 65% 15%;
 
-    --secondary: 172 25% 35%; /* Darker sage green */
-    --secondary-foreground: 14 100% 97%;
+    --secondary: 186 47% 35%; /* Darker turquoise */
+    --secondary-foreground: 183 77% 85%;
 
-    --muted: 164 60% 15%;
-    --muted-foreground: 14 60% 75%;
+    --muted: 204 40% 18%; /* Dark muted ocean */
+    --muted-foreground: 183 50% 70%;
 
-    --accent: 172 25% 35%; /* Darker sage green */
-    --accent-foreground: 14 100% 97%;
+    --accent: 187 73% 65%; /* Medium turquoise accent */
+    --accent-foreground: 204 65% 15%;
 
-    --brand: 172 45% 75%; /* Lighter green for dark mode brand */
-    --brand-foreground: 164 83% 14%;
+    --brand: 151 75% 75%; /* Bright mint for brand in dark mode */
+    --brand-foreground: 204 65% 15%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 164 50% 20%;
-    --input: 164 50% 20%;
-    --ring: 359 74% 85%;
+    --border: 204 30% 25%; /* Dark ocean border */
+    --input: 204 30% 25%;
+    --ring: 151 75% 75%;
     
-    --sidebar-background: 164 70% 10%;
-    --sidebar-foreground: 14 100% 97%;
-    --sidebar-primary: 359 74% 85%;
-    --sidebar-primary-foreground: 164 83% 14%;
-    --sidebar-accent: 164 60% 15%;
-    --sidebar-accent-foreground: 14 100% 97%;
-    --sidebar-border: 164 50% 20%;
-    --sidebar-ring: 359 74% 85%;
+    --sidebar-background: 204 55% 12%; /* Deep ocean sidebar */
+    --sidebar-foreground: 183 77% 85%;
+    --sidebar-primary: 151 75% 75%;
+    --sidebar-primary-foreground: 204 65% 15%;
+    --sidebar-accent: 204 40% 20%; /* Dark accent */
+    --sidebar-accent-foreground: 183 77% 85%;
+    --sidebar-border: 204 30% 22%;
+    --sidebar-ring: 151 75% 75%;
   }
 }
 
