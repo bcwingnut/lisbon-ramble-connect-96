@@ -37,7 +37,7 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    console.log('Calling Gemini API for travel suggestions...');
+    console.log('Calling Gemini API for travel suggestions (personal/location)...');
 
     let prompt;
     

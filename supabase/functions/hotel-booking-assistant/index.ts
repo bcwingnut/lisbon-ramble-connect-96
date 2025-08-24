@@ -19,7 +19,7 @@ serve(async (req) => {
     // Get Gemini API key from environment
     const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
     
-    console.log('🔍 Environment check:');
+    console.log('🔍 Environment check (booking):');
     console.log('- Function timestamp:', new Date().toISOString());
     console.log('- Available env vars:', Object.keys(Deno.env.toObject()).filter(k => k.includes('GEMINI')));
     console.log('- GEMINI_API_KEY exists:', !!geminiApiKey);
@@ -116,7 +116,7 @@ Keep responses focused on accommodations, conversational, and under 250 words.`
       error: error.message,
       fallbackResponse: "I apologize, but I'm having trouble accessing hotel information right now. Please try asking about specific destinations, dates, or requirements and I'll do my best to help you find great accommodations!"
     }), {
-      status: 500,
+      status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
