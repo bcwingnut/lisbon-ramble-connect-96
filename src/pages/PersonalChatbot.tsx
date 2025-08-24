@@ -10,6 +10,7 @@ import { Bot, Send, User } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import Auth from './Auth';
 import Navbar from '@/components/Navbar';
+import Markdown from '@/components/Markdown';
 
 interface ChatMessage {
   id: string;
@@ -156,7 +157,7 @@ const PersonalChatbot = () => {
                     ? 'bg-muted' 
                     : 'bg-primary text-primary-foreground ml-auto'
                 }`}>
-                  <p className="whitespace-pre-wrap">{message.content}</p>
+                  <Markdown content={message.content} isInverted={!message.isBot} />
                   <span className={`text-xs mt-2 block ${
                     message.isBot ? 'text-muted-foreground' : 'text-primary-foreground/70'
                   }`}>

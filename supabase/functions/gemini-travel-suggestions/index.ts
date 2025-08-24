@@ -57,12 +57,12 @@ serve(async (req) => {
       body: JSON.stringify({
         contents: [{
           parts: [{
-            text: `You are a helpful travel assistant for city-based chat rooms.\n\nCity: ${formatCity(location)}\n\nUser's current message: "${message}"\n\n${chatContext}\n\nRespond with recommendations relevant to this city's context and the user's request. If the request is unrelated to the city, briefly note that and ask one concise clarifying question before offering general tips.\n\nRespond in clear, well-structured GitHub-flavored Markdown:\n- Start with a concise title (##)\n- Use short sections with bullet points\n- Bold key place names and important tips\n- Include practical details (best time, how to get there, price ranges) when helpful\n- Include real, working URLs to official sites and booking pages when possible\n- Format links as: [Place Name](https://actual-website-url.com)\n- Keep it friendly and under 200 words`
+            text: `You are a helpful travel assistant that provides personalized travel advice for destinations worldwide.\n\nUser's message: "${message}"\n\nRespond with helpful travel recommendations, tips, or information based on their request. You can provide advice about any destination, activity, or travel-related topic.\n\nRespond in clear, well-structured GitHub-flavored Markdown:\n- Start with a concise title (##) when appropriate\n- Use short sections with bullet points\n- Bold key place names and important tips\n- Include practical details (best time to visit, how to get there, price ranges) when helpful\n- Include real, working URLs to official sites and booking pages when possible\n- Format links as: [Place Name](https://actual-website-url.com)\n- Keep it friendly and conversational\n- If they ask about a specific destination, provide detailed local insights\n- If they ask general travel questions, provide comprehensive advice\n- Maximum 400 words`
           }]
         }],
         generationConfig: {
           temperature: 0.7,
-          maxOutputTokens: 300,
+          maxOutputTokens: 500,
         },
       }),
     });
