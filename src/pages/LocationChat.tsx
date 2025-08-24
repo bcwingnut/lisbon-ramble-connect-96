@@ -64,6 +64,7 @@ const LocationChat = () => {
   // Store current location in localStorage for future visits
   useEffect(() => {
     if (locationData) {
+      console.log('Storing location in localStorage:', `/chat/${location}`);
       localStorage.setItem('lastChatLocation', `/chat/${location}`);
     }
   }, [location, locationData]);

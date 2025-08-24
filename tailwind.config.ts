@@ -68,6 +68,12 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				pink: {
+					DEFAULT: 'hsl(var(--pink))',
+					foreground: 'hsl(var(--pink-foreground))',
+					muted: 'hsl(var(--pink-muted))',
+					'muted-foreground': 'hsl(var(--pink-muted-foreground))'
 				}
 			},
 			borderRadius: {
