@@ -15,7 +15,7 @@ serve(async (req) => {
   }
 
   try {
-    const { message, userId, isPersonalChat, location = 'lisbon' } = await req.json();
+    const { message, userId, isPersonalChat, location = 'lisbon', chatHistory = [] } = await req.json();
     
     // Get Gemini API key from environment
     const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
@@ -39,24 +39,60 @@ serve(async (req) => {
 
     console.log('Calling Gemini API for travel suggestions...');
 
-    // Fetch recent chat history for this location (city chat)
-    const { data: recentMessages } = await supabase
-      .from('messages')
-      .select(`
-        content,
-        created_at,
-        profiles!messages_user_id_fkey (
-          username
-        )
-      `)
-      .eq('location', location)
-      .order('created_at', { ascending: false })
-      .limit(20);
+    let prompt;
+    
+    if (isPersonalChat) {
+      // Create context from chat history for personal chat
+      const context = chatHistory.length > 0 
+        ? `Previous conversation:\n${chatHistory.map((msg: any) => `${msg.role === 'assistant' ? 'Assistant' : 'User'}: ${msg.content}`).join('\n')}\n\n`
+        : '';
 
-    // Build context from recent messages (most recent last)
-    const chatContext = recentMessages && recentMessages.length > 0 
-      ? `\n\nRecent messages in ${formatCity(location)} chat:\n${[...recentMessages].reverse().map((msg: any) => `- ${(msg?.profiles?.username || 'User')}: ${msg.content}`).join('\n')}`
-      : '';
+      prompt = `You are a friendly, enthusiastic travel companion who loves chatting about all things travel-related. You're knowledgeable, curious, and genuinely interested in travel experiences, cultures, and destinations worldwide.
+
+${context}Current user message: "${message}"
+
+**Your personality:**
+- Warm, conversational, and genuinely curious about travel
+- Share interesting cultural insights and fun facts
+- Ask thoughtful follow-up questions to keep the conversation flowing
+- Be encouraging and inspiring about travel dreams and experiences
+- Use a natural, friend-like tone - not formal or business-like
+
+**What you help with:**
+- Casual travel conversations and storytelling
+- Cultural insights and interesting destination facts  
+- General travel advice and tips
+- Brainstorming trip ideas and destinations
+- Sharing fascinating travel knowledge
+
+Respond naturally and conversationally, like you're chatting with a friend about travel. Keep it engaging but not overly long (2-3 paragraphs max). If they share experiences, respond warmly and ask follow-up questions!`;
+    } else {
+      // Location-based chat prompt
+      prompt = `You are a helpful travel assistant that provides personalized travel advice for destinations worldwide.\n\nUser's message: "${message}"\n\nRespond with helpful travel recommendations, tips, or information based on their request. You can provide advice about any destination, activity, or travel-related topic.\n\nRespond in clear, well-structured GitHub-flavored Markdown:\n- Start with a concise title (##) when appropriate\n- Use short sections with bullet points\n- Bold key place names and important tips\n- Include practical details (best time to visit, how to get there, price ranges) when helpful\n- Include real, working URLs to official sites and booking pages when possible\n- Format links as: [Place Name](https://actual-website-url.com)\n- Keep it friendly and conversational\n- If they ask about a specific destination, provide detailed local insights\n- If they ask general travel questions, provide comprehensive advice\n- Maximum 400 words`;
+    }
+
+    // Fetch recent chat history for location-based chat only
+    let chatContext = '';
+    
+    if (!isPersonalChat) {
+      const { data: recentMessages } = await supabase
+        .from('messages')
+        .select(`
+          content,
+          created_at,
+          profiles!messages_user_id_fkey (
+            username
+          )
+        `)
+        .eq('location', location)
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      // Build context from recent messages (most recent last)
+      chatContext = recentMessages && recentMessages.length > 0 
+        ? `\n\nRecent messages in ${formatCity(location)} chat:\n${[...recentMessages].reverse().map((msg: any) => `- ${(msg?.profiles?.username || 'User')}: ${msg.content}`).join('\n')}`
+        : '';
+    }
 
     // Call Gemini API
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`, {
@@ -67,7 +103,7 @@ serve(async (req) => {
       body: JSON.stringify({
         contents: [{
           parts: [{
-            text: `You are a helpful travel assistant that provides personalized travel advice for destinations worldwide.\n\nUser's message: "${message}"\n\nRespond with helpful travel recommendations, tips, or information based on their request. You can provide advice about any destination, activity, or travel-related topic.\n\nRespond in clear, well-structured GitHub-flavored Markdown:\n- Start with a concise title (##) when appropriate\n- Use short sections with bullet points\n- Bold key place names and important tips\n- Include practical details (best time to visit, how to get there, price ranges) when helpful\n- Include real, working URLs to official sites and booking pages when possible\n- Format links as: [Place Name](https://actual-website-url.com)\n- Keep it friendly and conversational\n- If they ask about a specific destination, provide detailed local insights\n- If they ask general travel questions, provide comprehensive advice\n- Maximum 400 words`
+            text: prompt + (isPersonalChat ? '' : chatContext)
           }]
         }],
         generationConfig: {

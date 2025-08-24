@@ -64,7 +64,7 @@ const PersonalChatbot = () => {
           // Add welcome message if no chat history
           setMessages([{
             id: '1',
-            content: "# Personal Travel Assistant\n*Your AI guide 2 Go anywhere in the world* ✈️\n\nHello! I'm your dedicated AI travel assistant, ready to help you explore any destination on Earth. Whether you're planning a weekend getaway or a month-long adventure, I can help you with:\n\n🗺️ **Destination recommendations**\n🏨 **Hotel and accommodation advice**\n🍽️ **Restaurant and dining suggestions**\n🚗 **Transportation options**\n📅 **Itinerary planning**\n🎯 **Local attractions and activities**\n💡 **Travel tips and insider knowledge**\n\nJust tell me where you'd like to go or what you're curious about, and let's start planning your perfect trip!",
+            content: "# Personal Travel Assistant\n*Your AI guide 2 Go anywhere in the world* ✈️\n\nHello! I'm your friendly travel companion, ready to chat about anything travel-related! Whether you want to daydream about destinations, get cultural insights, learn about local customs, or just have a conversation about your travel experiences, I'm here for you.\n\n🌍 **Ask me about destinations worldwide**\n🎭 **Learn about cultures and customs** \n📖 **Share travel stories and experiences**\n🗺️ **Get general travel advice**\n💭 **Brainstorm trip ideas**\n🌟 **Discover hidden gems and local insights**\n\nWhat's on your travel mind today? Let's chat! 😊",
             role: 'assistant',
             created_at: new Date().toISOString()
           }]);
@@ -76,7 +76,7 @@ const PersonalChatbot = () => {
         // Add welcome message on error
         setMessages([{
           id: '1',
-          content: "# Personal Travel Assistant\n*Your AI guide 2 Go anywhere in the world* ✈️\n\nHello! I'm your dedicated AI travel assistant, ready to help you explore any destination on Earth. Whether you're planning a weekend getaway or a month-long adventure, I can help you with:\n\n🗺️ **Destination recommendations**\n🏨 **Hotel and accommodation advice**\n🍽️ **Restaurant and dining suggestions**\n🚗 **Transportation options**\n📅 **Itinerary planning**\n🎯 **Local attractions and activities**\n💡 **Travel tips and insider knowledge**\n\nJust tell me where you'd like to go or what you're curious about, and let's start planning your perfect trip!",
+          content: "# Personal Travel Assistant\n*Your AI guide 2 Go anywhere in the world* ✈️\n\nHello! I'm your friendly travel companion, ready to chat about anything travel-related! Whether you want to daydream about destinations, get cultural insights, learn about local customs, or just have a conversation about your travel experiences, I'm here for you.\n\n🌍 **Ask me about destinations worldwide**\n🎭 **Learn about cultures and customs** \n📖 **Share travel stories and experiences**\n🗺️ **Get general travel advice**\n💭 **Brainstorm trip ideas**\n🌟 **Discover hidden gems and local insights**\n\nWhat's on your travel mind today? Let's chat! 😊",
           role: 'assistant',
           created_at: new Date().toISOString()
         }]);
@@ -123,7 +123,8 @@ const PersonalChatbot = () => {
         body: { 
           message: messageContent,
           userId: user.id,
-          isPersonalChat: true
+          isPersonalChat: true,
+          chatHistory: messages.slice(-6) // Send last 6 messages for context
         }
       });
 
@@ -282,7 +283,7 @@ const PersonalChatbot = () => {
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Ask me about any travel destination..."
+              placeholder="What's on your travel mind? Ask me anything..."
               className="flex-1"
               disabled={isLoading}
             />
@@ -295,7 +296,7 @@ const PersonalChatbot = () => {
             </Button>
           </div>
           <p className="text-xs text-muted-foreground mt-2">
-            Ask about restaurants, attractions, transportation, or travel planning for any destination worldwide!
+            Chat about travel experiences, destinations, cultures, or anything travel-related!
           </p>
         </div>
       </div>
