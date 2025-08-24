@@ -16,18 +16,21 @@ const TravelerMap = () => {
   const { users, loading, refetch } = useUsers();
   const [currentUserLocation, setCurrentUserLocation] = useState<string | null>(null);
 
+  // Filter out AI Travel Assistant from users list
+  const realUsers = users.filter(u => u.username !== 'AI Travel Assistant');
+
   useEffect(() => {
-    if (user && users.length > 0) {
-      const currentUser = users.find(u => u.user_id === user.id);
+    if (user && realUsers.length > 0) {
+      const currentUser = realUsers.find(u => u.user_id === user.id);
       setCurrentUserLocation(currentUser?.location_text || null);
     }
-  }, [user, users]);
+  }, [user, realUsers]);
 
   if (!user) {
     return <Auth />;
   }
 
-  const usersWithLocations = users.filter(u => u.location_text);
+  const usersWithLocations = realUsers.filter(u => u.location_text);
 
   return (
     <div className="min-h-screen bg-background">
@@ -55,7 +58,7 @@ const TravelerMap = () => {
                 </p>
               </div>
               
-              <UserLocationMap users={users} />
+              <UserLocationMap users={realUsers} />
             </Card>
           </div>
 
@@ -84,7 +87,7 @@ const TravelerMap = () => {
             <Card className="p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Users className="h-5 w-5 text-primary" />
-                <h3 className="text-lg font-semibold">All Travelers ({users.length})</h3>
+                <h3 className="text-lg font-semibold">All Travelers ({realUsers.length})</h3>
               </div>
 
               {loading ? (
@@ -94,13 +97,13 @@ const TravelerMap = () => {
               ) : (
                 <ScrollArea className="h-96">
                   <div className="space-y-3">
-                    {users.length === 0 ? (
+                    {realUsers.length === 0 ? (
                       <div className="text-center py-8 text-muted-foreground">
                         <Users className="h-8 w-8 mx-auto mb-2 opacity-50" />
                         <p className="text-sm">No travelers yet</p>
                       </div>
                     ) : (
-                      users.map((traveler) => (
+                      realUsers.map((traveler) => (
                         <div
                           key={traveler.id}
                           className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors"
