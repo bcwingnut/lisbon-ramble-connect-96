@@ -32,7 +32,7 @@ const ChatInput = ({ onSendMessage, disabled }: ChatInputProps) => {
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="Share your Lisbon travel plans..."
+        placeholder="Share your travel plans or ask about hotels..."
         className="min-h-[60px] resize-none"
         disabled={disabled}
       />

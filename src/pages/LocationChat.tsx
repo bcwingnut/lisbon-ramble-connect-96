@@ -9,7 +9,8 @@ import ChatInput from '@/components/ChatInput';
 import UsersSidebar from '@/components/UsersSidebar';
 import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
-import { PanelRightOpen, PanelRightClose } from 'lucide-react';
+import { PanelRightOpen, PanelRightClose, Hotel, MapPin } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 import Auth from './Auth';
 
@@ -55,6 +56,7 @@ const LocationChat = () => {
   const { user, loading: authLoading } = useAuth();
   const { messages, loading: messagesLoading, sendMessage } = useMessages(location);
   const { toast } = useToast();
+  const navigate = useNavigate();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -163,9 +165,47 @@ const LocationChat = () => {
                   <div className="text-center py-8">
                     <div className="text-4xl mb-4">{locationData.flag}</div>
                     <h3 className="text-lg font-semibold mb-2">{locationData.welcome}</h3>
-                    <p className="text-muted-foreground max-w-md mx-auto">
+                    <p className="text-muted-foreground max-w-md mx-auto mb-6">
                       {locationData.description}
                     </p>
+                    
+                    {/* Quick Actions */}
+                    <div className="flex flex-wrap gap-2 justify-center max-w-lg mx-auto">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => navigate('/booking')}
+                        className="hover:bg-pink-muted hover:text-pink hover:border-pink"
+                      >
+                        <Hotel className="h-4 w-4 mr-2" />
+                        Find Hotels
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleSendMessage(`What are the best areas to stay in ${locationData.name}?`)}
+                        className="hover:bg-pink-muted hover:text-pink hover:border-pink"
+                      >
+                        <MapPin className="h-4 w-4 mr-2" />
+                        Best Areas
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleSendMessage(`Show me budget-friendly hotels in ${locationData.name}`)}
+                        className="hover:bg-pink-muted hover:text-pink hover:border-pink"
+                      >
+                        Budget Hotels
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleSendMessage(`What attractions are near hotels in ${locationData.name}?`)}
+                        className="hover:bg-pink-muted hover:text-pink hover:border-pink"
+                      >
+                        Near Attractions
+                      </Button>
+                    </div>
                   </div>
                 ) : (
                   messages.map((message) => (
