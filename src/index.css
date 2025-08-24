@@ -21,13 +21,13 @@ All colors MUST be HSL.
     --primary: 172 25% 45%; /* #568F87 - Sage green */
     --primary-foreground: 14 100% 97%;
 
-    --secondary: 359 74% 85%; /* #F5BABB - Soft rose */
+    --secondary: 172 35% 65%; /* More green - Forest sage */
     --secondary-foreground: 164 83% 14%;
 
     --muted: 14 50% 92%;
     --muted-foreground: 164 40% 35%;
 
-    --accent: 359 74% 85%; /* #F5BABB - Soft rose */
+    --accent: 172 35% 65%; /* More green - Forest sage */
     --accent-foreground: 164 83% 14%;
 
     --brand: 172 25% 45%; /* #568F87 - Sage green for brand */
@@ -62,7 +62,7 @@ All colors MUST be HSL.
     --popover: 164 70% 12%;
     --popover-foreground: 14 100% 97%;
 
-    --primary: 359 74% 85%; /* Soft rose for dark mode */
+    --primary: 172 45% 75%; /* Lighter green for dark mode */
     --primary-foreground: 164 83% 14%;
 
     --secondary: 172 25% 35%; /* Darker sage green */
@@ -71,10 +71,10 @@ All colors MUST be HSL.
     --muted: 164 60% 15%;
     --muted-foreground: 14 60% 75%;
 
-    --accent: 359 74% 85%; /* Soft rose */
-    --accent-foreground: 164 83% 14%;
+    --accent: 172 25% 35%; /* Darker sage green */
+    --accent-foreground: 14 100% 97%;
 
-    --brand: 359 74% 85%; /* Soft rose for dark mode brand */
+    --brand: 172 45% 75%; /* Lighter green for dark mode brand */
     --brand-foreground: 164 83% 14%;
 
     --destructive: 0 62.8% 30.6%;

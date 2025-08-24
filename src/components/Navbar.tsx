@@ -3,7 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { Bot, Hotel, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import LocationDropdown from './LocationDropdown';
-import love2GoLogo from '@/assets/love2go-logo.png';
+import love2GoLogo from '@/assets/love2go-logo-transparent.png';
 
 const Navbar = () => {
   const location = useLocation();
@@ -32,10 +32,10 @@ const Navbar = () => {
   return (
     <nav className="bg-card border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+        <div className="flex justify-between h-20">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
-              <img src={love2GoLogo} alt="Love2Go" className="h-8 w-8 mr-2" />
+              <img src={love2GoLogo} alt="Love2Go" className="h-16 w-16 mr-3" />
               <span className="text-2xl font-bold text-brand font-poppins">Love2Go</span>
             </div>
             <div className="ml-6 flex space-x-8">
