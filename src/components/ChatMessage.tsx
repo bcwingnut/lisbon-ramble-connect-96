@@ -35,7 +35,7 @@ const ChatMessage = ({ message, isOwn }: ChatMessageProps) => {
           </span>
         )}
         
-        <Card className={`p-3 ${isOwn ? 'bg-primary text-primary-foreground' : 'bg-card'}`}>
+        <Card className={`p-3 ${isOwn ? 'bg-primary text-primary-foreground' : 'bg-background'}`}>
           <Markdown content={message.content} isInverted={isOwn} />
           {isAi && urls.length > 0 && (
             <LinkChips urls={urls} />
