@@ -34,10 +34,10 @@ All colors MUST be HSL.
     --brand-foreground: 14 100% 97%;
 
     /* Pink accent colors */
-    --pink: 330 81% 60%; /* Vibrant pink for accents */
+    --pink: 359 65% 75%; /* #F5BABB inspired pink for accents */
     --pink-foreground: 0 0% 100%;
-    --pink-muted: 330 50% 90%; /* Light pink background */
-    --pink-muted-foreground: 330 81% 25%;
+    --pink-muted: 359 65% 90%; /* Light pink background */
+    --pink-muted-foreground: 359 65% 30%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
@@ -84,10 +84,10 @@ All colors MUST be HSL.
     --brand-foreground: 164 83% 14%;
 
     /* Pink accent colors for dark mode */
-    --pink: 330 70% 70%; /* Lighter pink for dark mode */
+    --pink: 359 65% 80%; /* Lighter version of #F5BABB for dark mode */
     --pink-foreground: 164 83% 8%;
-    --pink-muted: 330 30% 20%; /* Dark pink background */
-    --pink-muted-foreground: 330 70% 80%;
+    --pink-muted: 359 30% 25%; /* Dark pink background */
+    --pink-muted-foreground: 359 65% 85%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
