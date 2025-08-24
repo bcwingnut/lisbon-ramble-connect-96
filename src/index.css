@@ -8,93 +8,90 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Lisbon-inspired color palette */
-    --background: 48 100% 98%;
-    --foreground: 200 25% 15%;
+    /* Blue color palette */
+    --background: 193 76% 91%; /* Pale blue #CAF0F8 */
+    --foreground: 211 97% 27%; /* Dark blue #023E8A */
 
-    --card: 48 50% 96%;
-    --card-foreground: 200 25% 15%;
+    --card: 193 76% 95%;
+    --card-foreground: 211 97% 27%;
 
-    --popover: 48 50% 96%;
-    --popover-foreground: 200 25% 15%;
+    --popover: 193 76% 95%;
+    --popover-foreground: 211 97% 27%;
 
-    --primary: 45 90% 55%; /* Warm golden yellow like Lisbon's trams */
-    --primary-foreground: 200 25% 15%;
+    --primary: 199 100% 36%; /* Medium blue #0077B6 */
+    --primary-foreground: 193 76% 91%;
 
-    --secondary: 200 60% 85%; /* Soft blue like the Tagus River */
-    --secondary-foreground: 200 25% 15%;
+    --secondary: 193 76% 75%; /* Light blue #90E0EF */
+    --secondary-foreground: 211 97% 27%;
 
-    --muted: 200 40% 92%;
-    --muted-foreground: 200 15% 45%;
+    --muted: 193 76% 85%;
+    --muted-foreground: 211 50% 45%;
 
-    --accent: 25 85% 65%; /* Warm terracotta like Lisbon tiles */
-    --accent-foreground: 48 100% 98%;
+    --accent: 193 76% 75%; /* Light blue #90E0EF */
+    --accent-foreground: 211 97% 27%;
 
-    --brand: 215 100% 50%; /* Love2Go blue brand color */
-    --brand-foreground: 210 40% 98%;
+    --brand: 199 100% 36%; /* Medium blue #0077B6 */
+    --brand-foreground: 193 76% 91%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 193 50% 80%;
+    --input: 193 50% 80%;
+    --ring: 199 100% 36%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 193 76% 95%;
+    --sidebar-foreground: 211 97% 27%;
+    --sidebar-primary: 199 100% 36%;
+    --sidebar-primary-foreground: 193 76% 91%;
+    --sidebar-accent: 193 76% 85%;
+    --sidebar-accent-foreground: 211 97% 27%;
+    --sidebar-border: 193 50% 80%;
+    --sidebar-ring: 199 100% 36%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 211 97% 8%; /* Dark blue base */
+    --foreground: 193 76% 91%; /* Pale blue text */
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 211 90% 12%;
+    --card-foreground: 193 76% 91%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 211 90% 12%;
+    --popover-foreground: 193 76% 91%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 193 76% 75%; /* Light blue #90E0EF */
+    --primary-foreground: 211 97% 27%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 199 100% 36%; /* Medium blue #0077B6 */
+    --secondary-foreground: 193 76% 91%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 211 80% 15%;
+    --muted-foreground: 193 50% 65%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 193 76% 75%; /* Light blue #90E0EF */
+    --accent-foreground: 211 97% 27%;
+
+    --brand: 193 76% 75%; /* Light blue for dark mode */
+    --brand-foreground: 211 97% 27%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 211 70% 20%;
+    --input: 211 70% 20%;
+    --ring: 193 76% 75%;
+    
+    --sidebar-background: 211 90% 10%;
+    --sidebar-foreground: 193 76% 91%;
+    --sidebar-primary: 193 76% 75%;
+    --sidebar-primary-foreground: 211 97% 27%;
+    --sidebar-accent: 211 80% 15%;
+    --sidebar-accent-foreground: 193 76% 91%;
+    --sidebar-border: 211 70% 20%;
+    --sidebar-ring: 193 76% 75%;
   }
 }
 
