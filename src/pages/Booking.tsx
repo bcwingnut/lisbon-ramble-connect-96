@@ -30,7 +30,7 @@ const Booking = () => {
   const [messages, setMessages] = useState<BookingMessage[]>([
     {
       id: '1',
-      content: "Welcome to Lisbon Hotel Booking! 🏨 I'm your AI assistant ready to help you find the perfect accommodation in Lisbon. Tell me about your travel plans - when are you visiting, how many guests, and what type of experience are you looking for?",
+      content: "Welcome to AI Hotel Booking! 🏨 I'm your AI assistant ready to help you find the perfect accommodation anywhere in the world. Tell me about your travel plans - where are you going, when are you visiting, how many guests, and what type of experience are you looking for?",
       isBot: true,
       timestamp: new Date()
     }
@@ -101,7 +101,7 @@ Would you like to see more options, or do you have specific requirements like bu
     if (lowerMessage.includes('price') || lowerMessage.includes('budget') || lowerMessage.includes('cost')) {
       return {
         id: Date.now().toString(),
-        content: "I'd be happy to help you find hotels within your budget! Lisbon offers great options across different price ranges:\n\n💰 **Budget-friendly**: €40-80/night (hostels, budget hotels)\n💰 **Mid-range**: €80-150/night (boutique hotels, business hotels)\n💰 **Luxury**: €150+/night (5-star hotels, historic palaces)\n\nWhat's your preferred budget range per night?",
+        content: "I'd be happy to help you find hotels within your budget! Most destinations offer great options across different price ranges:\n\n💰 **Budget-friendly**: €40-80/night (hostels, budget hotels)\n💰 **Mid-range**: €80-150/night (boutique hotels, business hotels)\n💰 **Luxury**: €150+/night (5-star hotels, luxury resorts)\n\nWhat's your preferred budget range per night and which destination are you traveling to?",
         isBot: true,
         timestamp: new Date()
       };
@@ -110,7 +110,7 @@ Would you like to see more options, or do you have specific requirements like bu
     if (lowerMessage.includes('area') || lowerMessage.includes('location') || lowerMessage.includes('district')) {
       return {
         id: Date.now().toString(),
-        content: "Lisbon has many wonderful areas to stay! Here are the most popular districts:\n\n🏛️ **Alfama**: Historic charm, Fado music, narrow streets\n🛍️ **Chiado & Bairro Alto**: Shopping, nightlife, restaurants\n🏖️ **Belém**: Museums, monuments, riverside location\n🌆 **Modern Center**: Business district, metro access\n🎭 **Príncipe Real**: Trendy area, design shops, gardens\n\nWhich area appeals to you most, or do you have specific attractions you want to be near?",
+        content: "I can help you find the best areas to stay in your destination! Different neighborhoods offer unique experiences:\n\n🏛️ **Historic District**: Cultural sites, museums, traditional architecture\n🛍️ **City Center**: Shopping, restaurants, nightlife\n🏖️ **Waterfront**: Beach access, scenic views, relaxed atmosphere\n🌆 **Business District**: Modern amenities, transport links, conference facilities\n🎭 **Arts Quarter**: Galleries, theaters, trendy cafes\n\nWhich destination are you visiting, and what type of experience interests you most?",
         isBot: true,
         timestamp: new Date()
       };
@@ -128,7 +128,7 @@ Would you like to see more options, or do you have specific requirements like bu
     // Default response
     return {
       id: Date.now().toString(),
-      content: "I'm here to help you find and book the perfect hotel in Lisbon! I can assist you with:\n\n🏨 Hotel recommendations based on your preferences\n💰 Budget-friendly options and pricing\n📍 Best areas to stay for different interests\n🎯 Specific amenities (WiFi, parking, breakfast, etc.)\n📅 Availability and booking assistance\n\nWhat would you like to know about hotels in Lisbon?",
+      content: "I'm here to help you find and book the perfect hotel anywhere in the world! I can assist you with:\n\n🏨 Hotel recommendations based on your preferences\n💰 Budget-friendly options and pricing\n📍 Best areas to stay for different interests\n🎯 Specific amenities (WiFi, parking, breakfast, etc.)\n📅 Availability and booking assistance\n🌍 Destinations worldwide\n\nWhat destination are you planning to visit and what would you like to know?",
       isBot: true,
       timestamp: new Date()
     };
@@ -200,7 +200,7 @@ Would you like to see more options, or do you have specific requirements like bu
           <div className="text-center">
             <h1 className="text-3xl font-bold text-primary mb-2">🏨 Hotel Booking Assistant</h1>
             <p className="text-muted-foreground">
-              Find and book the perfect accommodation in Lisbon with AI assistance
+              Find and book the perfect accommodation anywhere in the world with AI assistance
             </p>
           </div>
           
