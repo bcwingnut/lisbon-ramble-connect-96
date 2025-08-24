@@ -184,11 +184,11 @@ const PersonalChatbot = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="h-screen bg-background flex flex-col">
       <Navbar />
       
-      <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
-        <div className="sticky top-24 z-10 p-6 border-b bg-background/95 backdrop-blur-sm">
+      <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full overflow-hidden">
+        <div className="p-6 border-b bg-background">
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10 bg-gradient-to-br from-blue-500 to-purple-600">
               <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white">
@@ -259,7 +259,7 @@ const PersonalChatbot = () => {
           </div>
         </ScrollArea>
 
-        <div className="p-6 border-t">
+        <div className="p-6 border-t bg-background">
           <div className="flex gap-2">
             <Input
               value={inputMessage}
