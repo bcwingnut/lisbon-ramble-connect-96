@@ -60,9 +60,26 @@ const PersonalChatbot = () => {
           created_at: msg.created_at
         }));
 
-        setMessages(formattedMessages);
+        if (formattedMessages.length === 0) {
+          // Add welcome message if no chat history
+          setMessages([{
+            id: '1',
+            content: "# Personal Travel Assistant\n*Your AI guide 2 Go anywhere in the world* ✈️\n\nHello! I'm your dedicated AI travel assistant, ready to help you explore any destination on Earth. Whether you're planning a weekend getaway or a month-long adventure, I can help you with:\n\n🗺️ **Destination recommendations**\n🏨 **Hotel and accommodation advice**\n🍽️ **Restaurant and dining suggestions**\n🚗 **Transportation options**\n📅 **Itinerary planning**\n🎯 **Local attractions and activities**\n💡 **Travel tips and insider knowledge**\n\nJust tell me where you'd like to go or what you're curious about, and let's start planning your perfect trip!",
+            role: 'assistant',
+            created_at: new Date().toISOString()
+          }]);
+        } else {
+          setMessages(formattedMessages);
+        }
       } catch (error) {
         console.error('Error loading chat messages:', error);
+        // Add welcome message on error
+        setMessages([{
+          id: '1',
+          content: "# Personal Travel Assistant\n*Your AI guide 2 Go anywhere in the world* ✈️\n\nHello! I'm your dedicated AI travel assistant, ready to help you explore any destination on Earth. Whether you're planning a weekend getaway or a month-long adventure, I can help you with:\n\n🗺️ **Destination recommendations**\n🏨 **Hotel and accommodation advice**\n🍽️ **Restaurant and dining suggestions**\n🚗 **Transportation options**\n📅 **Itinerary planning**\n🎯 **Local attractions and activities**\n💡 **Travel tips and insider knowledge**\n\nJust tell me where you'd like to go or what you're curious about, and let's start planning your perfect trip!",
+          role: 'assistant',
+          created_at: new Date().toISOString()
+        }]);
       }
     };
 
@@ -188,20 +205,6 @@ const PersonalChatbot = () => {
       <Navbar />
       
       <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full overflow-hidden">
-        <div className="p-6 border-b bg-background">
-          <div className="flex items-center gap-3">
-            <Avatar className="h-10 w-10 bg-gradient-to-br from-blue-500 to-purple-600">
-              <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white">
-                <Bot className="h-5 w-5" />
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <h1 className="text-2xl font-bold">Personal Travel Assistant</h1>
-              <p className="text-muted-foreground">Your AI guide 2 Go anywhere in the world</p>
-            </div>
-          </div>
-        </div>
-
         <ScrollArea className="flex-1 p-6">
           <div className="space-y-4 pb-4">
             {messages.map((message) => (
