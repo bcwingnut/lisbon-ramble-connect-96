@@ -188,7 +188,7 @@ const PersonalChatbot = () => {
       <Navbar />
       
       <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
-        <div className="sticky top-0 z-10 p-6 border-b bg-background/95 backdrop-blur-sm">
+        <div className="sticky top-24 z-10 p-6 border-b bg-background/95 backdrop-blur-sm">
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10 bg-gradient-to-br from-blue-500 to-purple-600">
               <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white">
