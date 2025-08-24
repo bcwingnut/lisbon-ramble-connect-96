@@ -131,7 +131,7 @@ const PersonalChatbot = () => {
             </Avatar>
             <div>
               <h1 className="text-2xl font-bold">Personal Travel Assistant</h1>
-              <p className="text-muted-foreground">Your AI guide for travel anywhere in the world</p>
+              <p className="text-muted-foreground">Your AI guide 2 Go anywhere in the world</p>
             </div>
           </div>
         </div>
