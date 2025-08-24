@@ -87,7 +87,7 @@ const Booking = () => {
           .from('chat_messages' as any)
           .select('*')
           .eq('user_id', user.id)
-          .is('booking_id', null) // For now, we'll use null booking_id for hotel chat
+          .eq('booking_id', 'hotel-assistant') // Use special ID for hotel assistant chat
           .order('created_at', { ascending: true });
 
         if (error) {
@@ -189,7 +189,8 @@ const Booking = () => {
         .insert({
           content: content,
           role: 'user',
-          user_id: user.id
+          user_id: user.id,
+          booking_id: 'hotel-assistant' // Use special ID for hotel assistant chat
         })
         .select()
         .single();
@@ -216,7 +217,8 @@ const Booking = () => {
         .insert({
           content: aiResponse,
           role: 'assistant',
-          user_id: user.id
+          user_id: user.id,
+          booking_id: 'hotel-assistant' // Use special ID for hotel assistant chat
         })
         .select()
         .single();
