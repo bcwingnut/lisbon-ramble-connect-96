@@ -39,6 +39,7 @@ const ChatInput = ({ onSendMessage, disabled }: ChatInputProps) => {
       <Button 
         type="submit" 
         size="icon"
+        variant="pink"
         disabled={!message.trim() || disabled}
         className="h-[60px] w-12 shrink-0"
       >

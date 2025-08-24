@@ -55,7 +55,7 @@ const Navbar = () => {
                         : 'text-muted-foreground hover:text-foreground hover:border-b-2 hover:border-muted-foreground'
                     )}
                   >
-                    <Icon className="h-4 w-4 mr-2" />
+                    <Icon className="h-4 w-4 mr-2 text-pink" />
                     {item.label}
                   </NavLink>
                 );

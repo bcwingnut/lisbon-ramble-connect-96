@@ -129,12 +129,12 @@ const LocationChat = () => {
                     variant="ghost"
                     size="sm"
                     onClick={() => setSidebarOpen(!sidebarOpen)}
-                    className="ml-auto"
+                    className="ml-auto hover:bg-pink-muted hover:text-pink"
                   >
                     {sidebarOpen ? (
-                      <PanelRightClose className="h-4 w-4" />
+                      <PanelRightClose className="h-4 w-4 text-pink" />
                     ) : (
-                      <PanelRightOpen className="h-4 w-4" />
+                      <PanelRightOpen className="h-4 w-4 text-pink" />
                     )}
                   </Button>
                 </ChatHeader>

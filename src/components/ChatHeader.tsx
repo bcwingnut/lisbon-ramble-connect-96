@@ -20,7 +20,7 @@ const ChatHeader = ({ children, locationName = 'Lisbon', locationFlag = 'ðŸ‡µðŸ‡
   return (
     <header className="flex items-center justify-between p-4 border-b bg-card">
       <div className="flex items-center gap-2">
-        <MapPin className="h-6 w-6 text-primary" />
+        <MapPin className="h-6 w-6 text-pink" />
         <div>
           <h1 className="text-lg font-semibold">{locationName} Travelers {locationFlag}</h1>
           <p className="text-sm text-muted-foreground">{locationDescription}</p>
@@ -32,7 +32,7 @@ const ChatHeader = ({ children, locationName = 'Lisbon', locationFlag = 'ðŸ‡µðŸ‡
         <span className="text-sm text-muted-foreground hidden sm:block">
           Welcome back!
         </span>
-        <Button variant="outline" size="sm" onClick={handleSignOut}>
+        <Button variant="pink-outline" size="sm" onClick={handleSignOut}>
           <LogOut className="h-4 w-4 mr-2" />
           Sign Out
         </Button>

@@ -24,8 +24,8 @@ const UsersSidebar = () => {
       <div className="bg-card h-full flex flex-col">
         <div className="p-4 border-b flex-shrink-0 bg-card">
           <div className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-primary" />
-            <h2 className="font-semibold">Travelers</h2>
+          <Users className="h-5 w-5 text-pink" />
+          <h2 className="font-semibold">Travelers</h2>
           </div>
         </div>
         <div className="flex items-center justify-center py-8">
@@ -40,7 +40,7 @@ const UsersSidebar = () => {
       {/* Fixed Header - Always visible at top */}
       <div className="p-4 border-b flex-shrink-0 bg-card">
         <div className="flex items-center gap-2">
-          <Users className="h-5 w-5 text-primary" />
+          <Users className="h-5 w-5 text-pink" />
           <h2 className="font-semibold">Travelers ({users.length})</h2>
         </div>
       </div>
@@ -70,7 +70,7 @@ const UsersSidebar = () => {
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">
+                    <p className="text-sm font-medium truncate text-pink">
                       {user.username}
                     </p>
                     <div className="flex items-center gap-1">

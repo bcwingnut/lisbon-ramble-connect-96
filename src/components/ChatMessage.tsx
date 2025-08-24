@@ -30,7 +30,7 @@ const ChatMessage = ({ message, isOwn }: ChatMessageProps) => {
       
       <div className={`flex flex-col max-w-[70%] ${isOwn ? 'items-end' : 'items-start'}`}>
         {!isOwn && (
-          <span className="text-xs text-muted-foreground mb-1 px-1">
+          <span className="text-xs mb-1 px-1 text-pink font-medium">
             {message.profiles.username}
           </span>
         )}
