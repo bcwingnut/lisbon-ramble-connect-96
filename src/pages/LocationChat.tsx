@@ -112,7 +112,7 @@ const LocationChat = () => {
         style={{ backgroundImage: `url(${locationData.background})` }}
       >
         {/* Overlay for better readability */}
-        <div className="absolute inset-0 bg-primary/30"></div>
+        <div className="absolute inset-0 bg-secondary/20"></div>
         
         <ResizablePanelGroup direction="horizontal" className="h-full relative z-10">
           {/* Main Chat Area */}
