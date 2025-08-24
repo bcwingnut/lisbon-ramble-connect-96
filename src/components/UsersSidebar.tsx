@@ -90,10 +90,8 @@ const UsersSidebar = () => {
         </ScrollArea>
       </div>
       
-      {/* Fixed Footer - Map and Location Input */}
+      {/* Fixed Footer - Location Input Only */}
       <div className="flex-shrink-0 border-t bg-card">
-        <UserLocationMap users={users} />
-        
         <LocationInput 
           currentLocation={currentUserLocation} 
           onLocationUpdate={(location) => {

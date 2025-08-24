@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Bot, Hotel } from 'lucide-react';
+import { Bot, Hotel, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import LocationDropdown from './LocationDropdown';
 
@@ -13,6 +13,12 @@ const Navbar = () => {
       label: 'Personal Chatbot',
       icon: Bot,
       description: 'AI travel assistant'
+    },
+    {
+      path: '/traveler-map',
+      label: 'Traveler Map',
+      icon: MapPin,
+      description: 'See where travelers are located'
     },
     {
       path: '/booking',

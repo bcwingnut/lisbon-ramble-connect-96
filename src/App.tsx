@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import PersonalChatbot from "./pages/PersonalChatbot";
 import Booking from "./pages/Booking";
+import TravelerMap from "./pages/TravelerMap";
 import LocationChat from "./pages/LocationChat";
 import NotFound from "./pages/NotFound";
 
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/chat/:location" element={<LocationChat />} />
           <Route path="/personal-chatbot" element={<PersonalChatbot />} />
+          <Route path="/traveler-map" element={<TravelerMap />} />
           <Route path="/booking" element={<Booking />} />
           <Route path="/auth" element={<Auth />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
