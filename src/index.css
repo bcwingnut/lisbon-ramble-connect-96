@@ -30,6 +30,9 @@ All colors MUST be HSL.
     --accent: 25 85% 65%; /* Warm terracotta like Lisbon tiles */
     --accent-foreground: 48 100% 98%;
 
+    --brand: 215 100% 50%; /* Love2Go blue brand color */
+    --brand-foreground: 210 40% 98%;
+
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 

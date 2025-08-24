@@ -28,7 +28,7 @@ const Navbar = () => {
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
-              <span className="text-xl font-bold text-primary">🌍 Global Travelers</span>
+              <span className="text-2xl font-bold text-brand font-poppins">Love2Go</span>
             </div>
             <div className="ml-6 flex space-x-8">
               <LocationDropdown />
