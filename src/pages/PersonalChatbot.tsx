@@ -190,8 +190,8 @@ const PersonalChatbot = () => {
       <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
         <div className="p-6 border-b">
           <div className="flex items-center gap-3">
-            <Avatar className="h-10 w-10">
-              <AvatarFallback className="bg-primary text-primary-foreground">
+            <Avatar className="h-10 w-10 bg-gradient-to-br from-blue-500 to-purple-600">
+              <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white">
                 <Bot className="h-5 w-5" />
               </AvatarFallback>
             </Avatar>
@@ -207,19 +207,19 @@ const PersonalChatbot = () => {
             {messages.map((message) => (
               <div
                 key={message.id}
-                className={`flex gap-3 ${message.role === 'assistant' ? 'justify-start' : 'justify-end'}`}
+                className={`flex gap-3 ${message.role === 'assistant' ? 'justify-start' : 'justify-end'} animate-fade-in`}
               >
                 {message.role === 'assistant' && (
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback className="bg-primary text-primary-foreground">
+                  <Avatar className="h-8 w-8 bg-gradient-to-br from-blue-500 to-purple-600 animate-pulse">
+                    <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white">
                       <Bot className="h-4 w-4" />
                     </AvatarFallback>
                   </Avatar>
                 )}
                 
-                <Card className={`max-w-[80%] p-4 ${
+                <Card className={`max-w-[80%] p-4 transition-all duration-300 hover-scale ${
                   message.role === 'assistant' 
-                    ? 'bg-muted' 
+                    ? 'bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-gradient-to-r from-blue-200 to-purple-200 shadow-lg animate-scale-in' 
                     : 'bg-primary text-primary-foreground ml-auto'
                 }`}>
                   <Markdown content={message.content} isInverted={message.role === 'user'} />
@@ -241,13 +241,13 @@ const PersonalChatbot = () => {
             ))}
             
             {isLoading && (
-              <div className="flex gap-3 justify-start">
-                <Avatar className="h-8 w-8">
-                  <AvatarFallback className="bg-primary text-primary-foreground">
+              <div className="flex gap-3 justify-start animate-fade-in">
+                <Avatar className="h-8 w-8 bg-gradient-to-br from-blue-500 to-purple-600 animate-pulse">
+                  <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white">
                     <Bot className="h-4 w-4" />
                   </AvatarFallback>
                 </Avatar>
-                <Card className="bg-muted p-4">
+                <Card className="bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-gradient-to-r from-blue-200 to-purple-200 shadow-lg p-4">
                   <div className="flex items-center gap-2">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
                     <span className="text-muted-foreground">Thinking...</span>

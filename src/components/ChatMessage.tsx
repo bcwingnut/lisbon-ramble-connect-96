@@ -1,6 +1,7 @@
 import { formatDistanceToNow } from 'date-fns';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Bot } from 'lucide-react';
 import type { Message } from '@/hooks/useMessages';
 import Markdown from '@/components/Markdown';
 import LinkChips from '@/components/LinkChips';
@@ -19,11 +20,11 @@ const ChatMessage = ({ message, isOwn }: ChatMessageProps) => {
   const urls = (message.content.match(/https?:\/\/[^\s)]+/g) || []).slice(0, 6);
   
   return (
-    <div className={`flex gap-3 ${isOwn ? 'justify-end' : 'justify-start'}`}>
+    <div className={`flex gap-3 ${isOwn ? 'justify-end' : 'justify-start'} animate-fade-in`}>
       {!isOwn && (
-        <Avatar className="h-8 w-8 mt-1">
-          <AvatarFallback className="text-xs bg-accent text-accent-foreground">
-            {message.profiles.username.slice(0, 2).toUpperCase()}
+        <Avatar className={`h-8 w-8 mt-1 ${isAi ? 'bg-gradient-to-br from-blue-500 to-purple-600 animate-pulse' : ''}`}>
+          <AvatarFallback className={`text-xs ${isAi ? 'bg-gradient-to-br from-blue-500 to-purple-600 text-white' : 'bg-accent text-accent-foreground'}`}>
+            {isAi ? <Bot className="h-4 w-4" /> : message.profiles.username.slice(0, 2).toUpperCase()}
           </AvatarFallback>
         </Avatar>
       )}
@@ -35,7 +36,13 @@ const ChatMessage = ({ message, isOwn }: ChatMessageProps) => {
           </span>
         )}
         
-        <Card className={`p-3 ${isOwn ? 'bg-primary text-primary-foreground' : 'bg-background'}`}>
+        <Card className={`p-3 transition-all duration-300 hover-scale ${
+          isOwn 
+            ? 'bg-primary text-primary-foreground' 
+            : isAi 
+              ? 'bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-gradient-to-r from-blue-200 to-purple-200 shadow-lg animate-scale-in' 
+              : 'bg-background'
+        }`}>
           <Markdown content={message.content} isInverted={isOwn} />
           {isAi && urls.length > 0 && (
             <LinkChips urls={urls} />
