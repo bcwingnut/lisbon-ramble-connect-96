@@ -1,1 +1,4 @@
 project_id = "pdpzxubfvxpsaharfrha"
+
+[functions.hotel-booking-assistant]
+verify_jwt = false

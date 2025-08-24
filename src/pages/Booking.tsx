@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/Navbar';
 import ChatMessage from '@/components/ChatMessage';
 import ChatInput from '@/components/ChatInput';
@@ -74,64 +75,26 @@ const Booking = () => {
     }
   ];
 
-  const generateBotResponse = (userMessage: string): BookingMessage => {
-    const lowerMessage = userMessage.toLowerCase();
-    
-    // Simple keyword-based responses for demo
-    if (lowerMessage.includes('hotel') || lowerMessage.includes('accommodation') || lowerMessage.includes('stay')) {
-      const randomHotel = sampleHotels[Math.floor(Math.random() * sampleHotels.length)];
-      return {
-        id: Date.now().toString(),
-        content: `Great! I found some excellent options for you. Here's a highly recommended hotel:
+  const callBookingAssistant = async (userMessage: string): Promise<string> => {
+    try {
+      const { data, error } = await supabase.functions.invoke('hotel-booking-assistant', {
+        body: { 
+          message: userMessage, 
+          userId: user?.id,
+          chatHistory: messages.slice(-6) // Send last 6 messages for context
+        }
+      });
 
-**${randomHotel.name}**
-📍 ${randomHotel.location}
-💰 Starting from ${randomHotel.price}
-⭐ ${randomHotel.rating}/5 rating
+      if (error) {
+        console.error('Booking assistant error:', error);
+        return "I'm sorry, I'm having trouble accessing hotel information right now. Please try again or ask me about specific destinations and I'll do my best to help!";
+      }
 
-This hotel offers: ${randomHotel.amenities.join(', ')}
-
-Would you like to see more options, or do you have specific requirements like budget range, preferred area, or special amenities?`,
-        isBot: true,
-        timestamp: new Date(),
-        hotelData: randomHotel
-      };
+      return data?.response || data?.fallbackResponse || "I couldn't process your request. Please try asking about hotels, destinations, or booking assistance.";
+    } catch (error) {
+      console.error('Error calling booking assistant:', error);
+      return "I'm experiencing technical difficulties. Please try again in a moment or let me know what destination you're interested in!";
     }
-    
-    if (lowerMessage.includes('price') || lowerMessage.includes('budget') || lowerMessage.includes('cost')) {
-      return {
-        id: Date.now().toString(),
-        content: "I'd be happy to help you find hotels within your budget! Most destinations offer great options across different price ranges:\n\n💰 **Budget-friendly**: €40-80/night (hostels, budget hotels)\n💰 **Mid-range**: €80-150/night (boutique hotels, business hotels)\n💰 **Luxury**: €150+/night (5-star hotels, luxury resorts)\n\nWhat's your preferred budget range per night and which destination are you traveling to?",
-        isBot: true,
-        timestamp: new Date()
-      };
-    }
-    
-    if (lowerMessage.includes('area') || lowerMessage.includes('location') || lowerMessage.includes('district')) {
-      return {
-        id: Date.now().toString(),
-        content: "I can help you find the best areas to stay in your destination! Different neighborhoods offer unique experiences:\n\n🏛️ **Historic District**: Cultural sites, museums, traditional architecture\n🛍️ **City Center**: Shopping, restaurants, nightlife\n🏖️ **Waterfront**: Beach access, scenic views, relaxed atmosphere\n🌆 **Business District**: Modern amenities, transport links, conference facilities\n🎭 **Arts Quarter**: Galleries, theaters, trendy cafes\n\nWhich destination are you visiting, and what type of experience interests you most?",
-        isBot: true,
-        timestamp: new Date()
-      };
-    }
-    
-    if (lowerMessage.includes('book') || lowerMessage.includes('reserve') || lowerMessage.includes('confirm')) {
-      return {
-        id: Date.now().toString(),
-        content: "Excellent! To proceed with your booking, I'll need a few details:\n\n📅 **Check-in & Check-out dates**\n👥 **Number of guests**\n🛏️ **Room preferences** (single, double, suite)\n📧 **Contact information**\n\nOnce you provide these details, I can check availability and guide you through the secure booking process. Most hotels offer free cancellation up to 24-48 hours before arrival!",
-        isBot: true,
-        timestamp: new Date()
-      };
-    }
-    
-    // Default response
-    return {
-      id: Date.now().toString(),
-      content: "I'm here to help you find and book the perfect hotel anywhere in the world! I can assist you with:\n\n🏨 Hotel recommendations based on your preferences\n💰 Budget-friendly options and pricing\n📍 Best areas to stay for different interests\n🎯 Specific amenities (WiFi, parking, breakfast, etc.)\n📅 Availability and booking assistance\n🌍 Destinations worldwide\n\nWhat destination are you planning to visit and what would you like to know?",
-      isBot: true,
-      timestamp: new Date()
-    };
   };
 
   const handleSendMessage = async (content: string) => {
@@ -147,12 +110,35 @@ Would you like to see more options, or do you have specific requirements like bu
     setMessages(prev => [...prev, userMessage]);
     setLoading(true);
 
-    // Simulate AI processing time
-    setTimeout(() => {
-      const botResponse = generateBotResponse(content);
+    try {
+      const aiResponse = await callBookingAssistant(content);
+      
+      const botResponse: BookingMessage = {
+        id: Date.now().toString(),
+        content: aiResponse,
+        isBot: true,
+        timestamp: new Date()
+      };
+
       setMessages(prev => [...prev, botResponse]);
+    } catch (error) {
+      console.error('Error getting AI response:', error);
+      toast({
+        title: "Error",
+        description: "Failed to get AI response. Please try again.",
+        variant: "destructive",
+      });
+      
+      const errorResponse: BookingMessage = {
+        id: Date.now().toString(),
+        content: "I'm sorry, I'm having trouble right now. Please try again or let me know what destination you're interested in visiting!",
+        isBot: true,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorResponse]);
+    } finally {
       setLoading(false);
-    }, 1000 + Math.random() * 1000);
+    }
   };
 
   const renderAmenityIcon = (amenity: string) => {
