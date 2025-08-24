@@ -36,15 +36,9 @@ const PersonalChatbot = () => {
 
   // Add welcome message when component mounts
   useEffect(() => {
-    if (user && messages.length === 0) {
-      setMessages([{
-        id: 'welcome',
-        content: `Hello ${user.email?.split('@')[0] || 'there'}! I'm your personal AI travel assistant for Lisbon. I can help you with recommendations, directions, local tips, and planning your perfect trip. What would you like to know about Lisbon?`,
-        isBot: true,
-        timestamp: new Date()
-      }]);
-    }
-  }, [user, messages.length]);
+    // Clear any existing messages on mount to reset chat history
+    setMessages([]);
+  }, [user]);
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return;
@@ -137,7 +131,7 @@ const PersonalChatbot = () => {
             </Avatar>
             <div>
               <h1 className="text-2xl font-bold">Personal Travel Assistant</h1>
-              <p className="text-muted-foreground">Your AI guide to Lisbon, Portugal</p>
+              <p className="text-muted-foreground">Your AI guide for travel anywhere in the world</p>
             </div>
           </div>
         </div>
@@ -205,7 +199,7 @@ const PersonalChatbot = () => {
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Ask me anything about Lisbon..."
+              placeholder="Ask me about any travel destination..."
               className="flex-1"
               disabled={isLoading}
             />
@@ -218,7 +212,7 @@ const PersonalChatbot = () => {
             </Button>
           </div>
           <p className="text-xs text-muted-foreground mt-2">
-            Ask about restaurants, attractions, transportation, or anything else about Lisbon!
+            Ask about restaurants, attractions, transportation, or travel planning for any destination worldwide!
           </p>
         </div>
       </div>
