@@ -16,18 +16,21 @@ serve(async (req) => {
   try {
     const { message, userId, chatHistory = [] } = await req.json();
     
-    // Get Gemini API key from environment
-    const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
+    // Get Gemini API key from environment (with fallbacks)
+    const env = Deno.env.toObject();
+    const geminiApiKey = (env['GEMINI_API_KEY'] || env['GOOGLE_API_KEY'] || env['GOOGLE_GENAI_API_KEY'] || '').trim();
+    const usedVar = env['GEMINI_API_KEY'] ? 'GEMINI_API_KEY' : env['GOOGLE_API_KEY'] ? 'GOOGLE_API_KEY' : env['GOOGLE_GENAI_API_KEY'] ? 'GOOGLE_GENAI_API_KEY' : 'NONE';
     
     console.log('🔍 Environment check (booking):');
     console.log('- Function timestamp:', new Date().toISOString());
-    console.log('- Available env vars:', Object.keys(Deno.env.toObject()).filter(k => k.includes('GEMINI')));
-    console.log('- GEMINI_API_KEY exists:', !!geminiApiKey);
-    console.log('- GEMINI_API_KEY length:', geminiApiKey?.length || 0);
-    console.log('- GEMINI_API_KEY prefix:', geminiApiKey?.substring(0, 15) || 'N/A');
+    console.log('- Available env vars:', Object.keys(env).filter(k => k.includes('GEMINI') || k.includes('GOOGLE')));
+    console.log('- Using key from:', usedVar);
+    console.log('- API key exists:', !!geminiApiKey);
+    console.log('- API key length:', geminiApiKey.length);
+    console.log('- API key prefix:', geminiApiKey ? geminiApiKey.substring(0, 15) : 'N/A');
     
-    if (!geminiApiKey || geminiApiKey.trim() === '') {
-      console.error('❌ GEMINI_API_KEY is missing or empty');
+    if (!geminiApiKey) {
+      console.error('❌ Gemini API key is missing or empty');
       throw new Error('Gemini API key not configured');
     }
 
