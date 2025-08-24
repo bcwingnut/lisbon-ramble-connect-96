@@ -14,6 +14,152 @@ export type Database = {
   }
   public: {
     Tables: {
+      bookings: {
+        Row: {
+          booking_type: string
+          created_at: string
+          error_message: string | null
+          id: string
+          request_text: string
+          result_data: Json | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          booking_type?: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          request_text: string
+          result_data?: Json | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          booking_type?: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          request_text?: string
+          result_data?: Json | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      chat_messages: {
+        Row: {
+          booking_id: string | null
+          content: string
+          created_at: string
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          booking_id?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          booking_id?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      destination_activities: {
+        Row: {
+          activity_name: string
+          activity_type: string
+          coordinates: unknown | null
+          created_at: string
+          description: string | null
+          destination: string
+          id: string
+          rating: number | null
+        }
+        Insert: {
+          activity_name: string
+          activity_type: string
+          coordinates?: unknown | null
+          created_at?: string
+          description?: string | null
+          destination: string
+          id?: string
+          rating?: number | null
+        }
+        Update: {
+          activity_name?: string
+          activity_type?: string
+          coordinates?: unknown | null
+          created_at?: string
+          description?: string | null
+          destination?: string
+          id?: string
+          rating?: number | null
+        }
+        Relationships: []
+      }
+      lead_enrichments: {
+        Row: {
+          company_linkedin_result: string | null
+          confidence_score: number | null
+          created_at: string
+          error_message: string | null
+          id: string
+          lead_linkedin: string | null
+          lead_name: string
+          linkedin_result: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          company_linkedin_result?: string | null
+          confidence_score?: number | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          lead_linkedin?: string | null
+          lead_name: string
+          linkedin_result?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          company_linkedin_result?: string | null
+          confidence_score?: number | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          lead_linkedin?: string | null
+          lead_name?: string
+          linkedin_result?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           content: string
@@ -79,6 +225,39 @@ export type Database = {
           updated_at?: string
           user_id?: string
           username?: string
+        }
+        Relationships: []
+      }
+      user_activities: {
+        Row: {
+          activity_description: string
+          activity_type: string
+          created_at: string
+          id: string
+          location_coordinates: unknown | null
+          location_text: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          activity_description: string
+          activity_type: string
+          created_at?: string
+          id?: string
+          location_coordinates?: unknown | null
+          location_text?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          activity_description?: string
+          activity_type?: string
+          created_at?: string
+          id?: string
+          location_coordinates?: unknown | null
+          location_text?: string | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
