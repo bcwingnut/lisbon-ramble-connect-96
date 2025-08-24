@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { MessageCircle, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -19,9 +19,39 @@ const locations = [
 const LocationDropdown = () => {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+  const [rememberedLocation, setRememberedLocation] = useState<string | null>(null);
   
-  // Find current location based on path
-  const currentLocation = locations.find(loc => location.pathname === loc.path) || locations[0];
+  useEffect(() => {
+    // Get remembered location from localStorage
+    const lastLocation = localStorage.getItem('lastChatLocation');
+    console.log('LocationDropdown: lastChatLocation from storage:', lastLocation);
+    setRememberedLocation(lastLocation);
+  }, []);
+  
+  // Find current location based on path or remembered location
+  const getCurrentLocation = () => {
+    // If we're on a chat page, use that location
+    const chatLocation = locations.find(loc => location.pathname === loc.path);
+    if (chatLocation) {
+      console.log('LocationDropdown: Using current chat location:', chatLocation.label);
+      return chatLocation;
+    }
+    
+    // Otherwise, use remembered location
+    if (rememberedLocation) {
+      const remembered = locations.find(loc => loc.path === rememberedLocation);
+      if (remembered) {
+        console.log('LocationDropdown: Using remembered location:', remembered.label);
+        return remembered;
+      }
+    }
+    
+    // Fall back to Lisbon
+    console.log('LocationDropdown: Using fallback location: Lisbon');
+    return locations[0];
+  };
+  
+  const currentLocation = getCurrentLocation();
   const isActive = locations.some(loc => location.pathname === loc.path);
 
   return (
