@@ -61,8 +61,20 @@ const LocationChat = () => {
   // Check if location is valid
   const locationData = location && locationConfig[location as keyof typeof locationConfig];
   
+  // Store current location in localStorage for future visits
+  useEffect(() => {
+    if (locationData) {
+      localStorage.setItem('lastChatLocation', `/chat/${location}`);
+    }
+  }, [location, locationData]);
+  
   if (!locationData) {
-    return <Navigate to="/chat/lisbon" replace />;
+    // Get the last visited chat location from localStorage, default to Lisbon
+    const getLastChatLocation = () => {
+      const lastLocation = localStorage.getItem('lastChatLocation');
+      return lastLocation || '/chat/lisbon';
+    };
+    return <Navigate to={getLastChatLocation()} replace />;
   }
 
   const scrollToBottom = () => {

@@ -2,8 +2,13 @@ import { useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 
 const Index = () => {
-  // Redirect to Lisbon chat as the default location
-  return <Navigate to="/chat/lisbon" replace />;
+  // Get the last visited chat location from localStorage, default to Lisbon
+  const getLastChatLocation = () => {
+    const lastLocation = localStorage.getItem('lastChatLocation');
+    return lastLocation || '/chat/lisbon';
+  };
+
+  return <Navigate to={getLastChatLocation()} replace />;
 };
 
 export default Index;
