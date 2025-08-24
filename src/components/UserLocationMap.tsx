@@ -22,8 +22,21 @@ const UserLocationMap = ({ users }: UserLocationMapProps) => {
   
   console.log('🗺️ UserLocationMap called with', users?.length || 0, 'users');
   
-  const usersWithCoords = users.filter(u => u.location_coordinates && u.location_coordinates.coordinates);
+  // Filter users with coordinates - PostgreSQL point format is "(x,y)" 
+  const usersWithCoords = users.filter(u => u.location_coordinates);
   console.log('🗺️ Users with coordinates:', usersWithCoords.length);
+  
+  // Parse PostgreSQL point coordinates "(lng,lat)" to [lng, lat] array
+  const parsePostgresPoint = (point: any): [number, number] | null => {
+    if (typeof point === 'string') {
+      // Format: "(lng,lat)" 
+      const matches = point.match(/\(([^,]+),([^)]+)\)/);
+      if (matches) {
+        return [parseFloat(matches[1]), parseFloat(matches[2])];
+      }
+    }
+    return null;
+  };
 
   // Get Mapbox token
   useEffect(() => {
@@ -64,8 +77,10 @@ const UserLocationMap = ({ users }: UserLocationMapProps) => {
       // Calculate bounds from user coordinates
       const bounds = new mapboxgl.LngLatBounds();
       usersWithCoords.forEach(user => {
-        const coords = user.location_coordinates.coordinates;
-        bounds.extend([coords[0], coords[1]]);
+        const coords = parsePostgresPoint(user.location_coordinates);
+        if (coords) {
+          bounds.extend(coords);
+        }
       });
 
       map.current = new mapboxgl.Map({
@@ -86,7 +101,8 @@ const UserLocationMap = ({ users }: UserLocationMapProps) => {
 
       // Add user markers
       usersWithCoords.forEach((user) => {
-        const coords = user.location_coordinates.coordinates;
+        const coords = parsePostgresPoint(user.location_coordinates);
+        if (!coords) return;
         
         const popup = new mapboxgl.Popup({ offset: 25 })
           .setHTML(`
@@ -97,7 +113,7 @@ const UserLocationMap = ({ users }: UserLocationMapProps) => {
           `);
 
         new mapboxgl.Marker({ color: '#3b82f6' })
-          .setLngLat([coords[0], coords[1]])
+          .setLngLat(coords)
           .setPopup(popup)
           .addTo(map.current!);
       });

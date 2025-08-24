@@ -30,7 +30,10 @@ const TravelerMap = () => {
         // Fetch user activities
         const { data: userActivitiesData, error: userError } = await supabase
           .from('user_activities')
-          .select('*, profiles!user_activities_user_id_fkey(username, location_text)');
+          .select(`
+            *,
+            profiles!inner(username, location_text)
+          `);
           
         if (userError) {
           console.error('Error fetching user activities:', userError);
