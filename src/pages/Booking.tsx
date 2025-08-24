@@ -8,6 +8,12 @@ import ChatInput from '@/components/ChatInput';
 import Markdown from '@/components/Markdown';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Calendar as CalendarComponent } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 import { Calendar, MapPin, Users, Star, Wifi, Car, Coffee, Utensils } from 'lucide-react';
 import Auth from './Auth';
 
@@ -32,6 +38,12 @@ const Booking = () => {
   const [messages, setMessages] = useState<BookingMessage[]>([]);
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  // Booking form state
+  const [numberOfPeople, setNumberOfPeople] = useState<number>(1);
+  const [checkInDate, setCheckInDate] = useState<Date>();
+  const [checkOutDate, setCheckOutDate] = useState<Date>();
+  const [showBookingForm, setShowBookingForm] = useState(true);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -71,7 +83,7 @@ const Booking = () => {
           // Add welcome message if no chat history
           setMessages([{
             id: '1',
-            content: "Welcome to AI Hotel Booking! 🏨 I'm your AI assistant ready to help you find the perfect accommodation anywhere in the world. Tell me about your travel plans - where are you going, when are you visiting, how many guests, and what type of experience are you looking for?",
+            content: "Hello there! 👋 I'm Sophia, your dedicated hotel concierge! I'm absolutely thrilled to help you discover the most amazing accommodations for your next adventure. I've personally curated recommendations from boutique gems to luxury resorts worldwide. \n\nTo get started, please fill out the booking form above with your travel details, and I'll craft personalized recommendations just for you! ✨",
             isBot: true,
             timestamp: new Date()
           }]);
@@ -81,7 +93,7 @@ const Booking = () => {
         // Add welcome message on error
         setMessages([{
           id: '1',
-          content: "Welcome to AI Hotel Booking! 🏨 I'm your AI assistant ready to help you find the perfect accommodation anywhere in the world. Tell me about your travel plans - where are you going, when are you visiting, how many guests, and what type of experience are you looking for?",
+          content: "Hello there! 👋 I'm Sophia, your dedicated hotel concierge! I'm absolutely thrilled to help you discover the most amazing accommodations for your next adventure. I've personally curated recommendations from boutique gems to luxury resorts worldwide. \n\nTo get started, please fill out the booking form above with your travel details, and I'll craft personalized recommendations just for you! ✨",
           isBot: true,
           timestamp: new Date()
         }]);
@@ -218,6 +230,15 @@ const Booking = () => {
     }
   };
 
+  const handleFormSubmit = () => {
+    // For now, this doesn't do anything as requested
+    console.log('Form submitted:', {
+      numberOfPeople,
+      checkInDate,
+      checkOutDate
+    });
+  };
+
   const renderAmenityIcon = (amenity: string) => {
     switch (amenity.toLowerCase()) {
       case 'free wifi':
@@ -261,48 +282,106 @@ const Booking = () => {
         {/* Header */}
         <div className="p-6 border-b bg-card">
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-primary mb-2">🏨 Hotel Booking Assistant</h1>
+            <h1 className="text-3xl font-bold text-primary mb-2">✨ Sophia - Your Hotel Concierge</h1>
             <p className="text-muted-foreground">
-              Find and book the perfect accommodation anywhere in the world with AI assistance
+              Personalized luxury accommodations curated just for you
             </p>
           </div>
-          
-          {/* Quick Actions */}
-          <div className="flex flex-wrap gap-2 mt-4 justify-center">
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => handleSendMessage("Show me budget-friendly hotels")}
-            >
-              <MapPin className="h-4 w-4 mr-2" />
-              Budget Hotels
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => handleSendMessage("What are the best areas to stay?")}
-            >
-              <Calendar className="h-4 w-4 mr-2" />
-              Best Areas
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => handleSendMessage("Show me luxury hotels with spa")}
-            >
-              <Star className="h-4 w-4 mr-2" />
-              Luxury Options
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => handleSendMessage("Hotels near tourist attractions")}
-            >
-              <Users className="h-4 w-4 mr-2" />
-              Near Attractions
-            </Button>
-          </div>
         </div>
+
+        {/* Booking Form */}
+        {showBookingForm && (
+          <div className="p-6 border-b bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-950/20 dark:to-purple-950/20">
+            <Card className="p-6 max-w-2xl mx-auto">
+              <h2 className="text-xl font-semibold mb-4 text-center">Tell me about your perfect stay</h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                {/* Number of People */}
+                <div className="space-y-2">
+                  <Label htmlFor="people">Number of Guests</Label>
+                  <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="people"
+                      type="number"
+                      min="1"
+                      max="20"
+                      value={numberOfPeople}
+                      onChange={(e) => setNumberOfPeople(Number(e.target.value))}
+                      className="flex-1"
+                    />
+                  </div>
+                </div>
+
+                {/* Check-in Date */}
+                <div className="space-y-2">
+                  <Label>Check-in Date</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !checkInDate && "text-muted-foreground"
+                        )}
+                      >
+                        <Calendar className="mr-2 h-4 w-4" />
+                        {checkInDate ? format(checkInDate, "MMM dd, yyyy") : "Select date"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <CalendarComponent
+                        mode="single"
+                        selected={checkInDate}
+                        onSelect={setCheckInDate}
+                        disabled={(date) => date < new Date()}
+                        initialFocus
+                        className={cn("p-3 pointer-events-auto")}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                {/* Check-out Date */}
+                <div className="space-y-2">
+                  <Label>Check-out Date</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !checkOutDate && "text-muted-foreground"
+                        )}
+                      >
+                        <Calendar className="mr-2 h-4 w-4" />
+                        {checkOutDate ? format(checkOutDate, "MMM dd, yyyy") : "Select date"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <CalendarComponent
+                        mode="single"
+                        selected={checkOutDate}
+                        onSelect={setCheckOutDate}
+                        disabled={(date) => date < (checkInDate || new Date())}
+                        initialFocus
+                        className={cn("p-3 pointer-events-auto")}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </div>
+
+              <Button 
+                onClick={handleFormSubmit}
+                className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700"
+                size="lg"
+              >
+                ✨ Find My Perfect Hotel
+              </Button>
+            </Card>
+          </div>
+        )}
 
         {/* Messages */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
