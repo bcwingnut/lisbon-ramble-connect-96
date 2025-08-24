@@ -16,7 +16,10 @@ serve(async (req) => {
     const { message, userId, chatHistory = [] } = await req.json();
     
     const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
+    console.log('🔑 API Key status:', geminiApiKey ? `Found (${geminiApiKey.length} chars, starts with: ${geminiApiKey.substring(0, 10)}...)` : 'NOT FOUND');
+    
     if (!geminiApiKey) {
+      console.error('❌ GEMINI_API_KEY environment variable is not set');
       throw new Error('Gemini API key not configured');
     }
 
